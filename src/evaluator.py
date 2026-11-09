@@ -7,6 +7,7 @@ import torch
 from data import load_split
 from init_weights import head_from_stats
 from model import CatDogNet
+import paths
 from paths import IS_V2
 
 _CACHE: dict[str, tuple] = {}
@@ -102,15 +103,20 @@ def score_model(model: CatDogNet, head_cfg: dict) -> dict:
     """train + val (+ LOO / CV diagnostic). Never touches the test split."""
     if IS_V2:
         train_acts = forward_all(model, split_data("train")[0])
-        return {"train": evaluate_split(model, "train", train_acts), "val": evaluate_split(model, "val"),
-                "cv": cv_head_diagnostic(model, head_cfg, train_acts["gap"])}
+        out = {"train": evaluate_split(model, "train", train_acts), "val": evaluate_split(model, "val"),
+               "cv": cv_head_diagnostic(model, head_cfg, train_acts["gap"])}
+        if paths.LOO_RULE:
+            out["loo"] = loo_head_diagnostic(model, head_cfg)
+        return out
     return {"train": evaluate_split(model, "train"), "val": evaluate_split(model, "val"),
             "loo": loo_head_diagnostic(model, head_cfg)}
 
 
 def headline(score: dict) -> dict:
     if IS_V2:
-        return {"train_acc": round(score["train"]["accuracy"], 4),
+        extra = ({"loo_acc": round(score["loo"]["accuracy"], 4), "loo_f1": round(score["loo"]["f1"], 4),
+                  "loo_margin": round(score["loo"]["mean_signed_margin"], 4)} if "loo" in score else {})
+        return {**extra, "train_acc": round(score["train"]["accuracy"], 4),
                 "val_acc": round(score["val"]["accuracy"], 4),
                 "val_f1": round(score["val"]["f1"], 4),
                 "val_margin": round(score["val"]["mean_signed_margin"], 4),

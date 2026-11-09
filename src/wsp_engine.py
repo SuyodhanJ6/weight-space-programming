@@ -50,6 +50,12 @@ ACCEPTANCE_RULE_V2 = (
     "fall by more than 0.010 AND (c) validation F1 does not fall by more than 0.010. Train accuracy "
     "is recorded but never used to accept. The sealed test split is never read during iterations."
 )
+ACCEPTANCE_RULE_V3 = (
+    f"{paths.EXPERIMENT}, rule v3, pre-registered before any edit (replaces v2 after WSP-005 rejected 19 of 19 edits). "
+    "Accept iff pooled leave-one-out accuracy over ALL 16 train+val images (head rule refit on 15, predict 1) rises by "
+    ">= 1 image (0.0625) over the accepted checkpoint AND leave-one-out F1 does not fall. Train accuracy, the 4-image "
+    "val split alone and 5-fold CV are recorded but never used to accept. The sealed test split is never read during iterations."
+)
 EPS = 1e-9
 
 
@@ -148,7 +154,7 @@ def init_state() -> dict:
         "splits": read_json(Path("dataset/processed/splits.json"), {}) if not IS_V2 else {"manifest": str(paths.V2_MANIFEST)},
         "manifest": str(EXP / "manifest.json"), "test_evaluated": False,
         "reference_checkpoint": "checkpoints/wsp-003/iter013.pt" if paths.EXPERIMENT == "wsp-004" else None,
-        "acceptance_rule": ACCEPTANCE_RULE_V2 if IS_V2 else ACCEPTANCE_RULE, "next_action": "run pending iterations",
+        "acceptance_rule": ACCEPTANCE_RULE_V3 if paths.LOO_RULE else (ACCEPTANCE_RULE_V2 if IS_V2 else ACCEPTANCE_RULE), "next_action": "run pending iterations",
         "updated": time.strftime("%Y-%m-%dT%H:%M:%S")}
     atomic_write(STATE, json.dumps(state, indent=2))
     atomic_write(HISTORY, json.dumps([{"id": "iter000", "title": "hand-programmed baseline",
@@ -156,7 +162,7 @@ def init_state() -> dict:
                                        "checkpoint": BASELINE_CKPT}], indent=2))
     atomic_write(CHANGES, "[]")
     atomic_write(DECISIONS, "# Decision log\n\n## Pre-registered acceptance rule\n\n"
-                 f"{ACCEPTANCE_RULE_V2 if IS_V2 else ACCEPTANCE_RULE}\n\n## iter000: baseline\n\nHand-programmed initial network. "
+                 f"{ACCEPTANCE_RULE_V3 if paths.LOO_RULE else (ACCEPTANCE_RULE_V2 if IS_V2 else ACCEPTANCE_RULE)}\n\n## iter000: baseline\n\nHand-programmed initial network. "
                  f"{headline(score)}\n")
     write_progress(state)
     log("state initialised from baseline")
@@ -189,7 +195,18 @@ def decide_v2(prev: dict, new: dict) -> tuple[bool, str]:
     return False, f"no meaningful val improvement (val {dv:+.4f}, cv {dc:+.4f}, val_f1 {df:+.4f})"
 
 
+def decide_v3(prev: dict, new: dict) -> tuple[bool, str]:
+    da, df = new["loo_acc"] - prev["loo_acc"], new["loo_f1"] - prev["loo_f1"]
+    if df < -EPS:
+        return False, f"LOO F1 regression (loo_acc {da:+.4f}, loo_f1 {df:+.4f})"
+    if da >= 0.0625 - EPS:
+        return True, f"LOO improvement (loo_acc {da:+.4f}, loo_f1 {df:+.4f})"
+    return False, f"no meaningful LOO improvement (loo_acc {da:+.4f}, loo_f1 {df:+.4f})"
+
+
 def decide(prev: dict, new: dict) -> tuple[bool, str]:
+    if paths.LOO_RULE:
+        return decide_v3(prev, new)
     if IS_V2:
         return decide_v2(prev, new)
     dv = new["val_acc"] - prev["val_acc"]

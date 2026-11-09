@@ -18,6 +18,7 @@ EXPERIMENTS = {
     "wsp-003": {"dir": Path("experiments/wsp-003"), "acc_key": "cv_acc", "acc_label": "CV", "sizes": "8,000 / 3,000 / 6,000"},
     "wsp-004": {"dir": Path("experiments/wsp-004"), "acc_key": "cv_acc", "acc_label": "CV", "sizes": "8,000 / 3,000 / 3,884"},
     "wsp-005": {"dir": Path("experiments/wsp-005"), "acc_key": "cv_acc", "acc_label": "CV", "sizes": "12 / 4 / 4"},
+    "wsp-006": {"dir": Path("experiments/wsp-006"), "acc_key": "loo_acc", "acc_label": "LOO(16)", "sizes": "12 / 4 / 4"},
 }
 SNAPSHOT_FILES = ["experiment_state.json", "experiment_history.json", "parameter_changes.json", "decision_log.md",
                   "controls.json", "final_test_results.json", "audit_report.json", "dataset_report.json"]

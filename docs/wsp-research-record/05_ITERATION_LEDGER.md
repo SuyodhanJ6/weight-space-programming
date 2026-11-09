@@ -517,3 +517,125 @@ are in `data/<experiment>/experiment_history.json` and `parameter_changes.json`.
   * Parameters: head.weight (512), head.bias [closed-form head]
   * Expected / risks: Identical to iter005 -> rejected again. / None; diagnostic.
 
+## wsp-006 (19 iterations)
+
+| id | title | params | val acc | LOO(16) | decision | reason |
+|---|---|---|---|---|---|---|
+| iter001 | De-mean the head (replication of WSP-001 iter001 on a new split) | 513 | 0.5000->1.0000 | 0.7500->0.6875 | **REJECTED** | LOO F1 regression (loo_acc -0.0625, loo_f1 -0.0441) |
+| iter002 | Negative conv2 biases to restore ReLU gating | 545 | 0.5000->0.2500 | 0.7500->0.7500 | **REJECTED** | LOO F1 regression (loo_acc +0.0000, loo_f1 -0.0357) |
+| iter003 | Wire the dead colour pathway into conv2 | 585 | 0.5000->0.7500 | 0.7500->0.8125 | **ACCEPTED** | LOO improvement (loo_acc +0.0625, loo_f1 +0.0500) |
+| iter004 | Wider spatial pooling in conv3 (3x3 box instead of 1-2-1 blur) | 1809 | 0.7500->0.2500 | 0.8125->0.8125 | **REJECTED** | no meaningful LOO improvement (loo_acc +0.0000, loo_f1 +0.0000) |
+| iter005 | Pooled-cell head (shared weights over the 16 pooled cells) | 513 | 0.7500->0.2500 | 0.8125->0.6250 | **REJECTED** | LOO F1 regression (loo_acc -0.1875, loo_f1 -0.2286) |
+| iter006 | Down-weight border cells of the head (background suppression) | 513 | 0.7500->0.7500 | 0.8125->0.8125 | **REJECTED** | LOO F1 regression (loo_acc +0.0000, loo_f1 -0.0308) |
+| iter007 | Centroid head rule (no variance scaling) | 513 | 0.7500->0.7500 | 0.8125->0.6875 | **REJECTED** | LOO F1 regression (loo_acc -0.1250, loo_f1 -0.1846) |
+| iter008 | Half-strength conv3 bias centring | 545 | 0.7500->0.7500 | 0.8125->0.8125 | **REJECTED** | no meaningful LOO improvement (loo_acc +0.0000, loo_f1 +0.0000) |
+| iter009 | Full-covariance LDA head (ridge) | 513 | 0.7500->0.5000 | 0.8125->0.4375 | **REJECTED** | LOO F1 regression (loo_acc -0.3750, loo_f1 -0.4000) |
+| iter010 | [exploratory] Centre/border pooled head (64 shared weights) | 513 | 0.7500->0.5000 | 0.8125->0.6875 | **REJECTED** | LOO F1 regression (loo_acc -0.1250, loo_f1 -0.1333) |
+| iter011 | [exploratory] Remove colour-opponent filters from conv1 | 788 | 0.7500->0.5000 | 0.8125->0.7500 | **REJECTED** | LOO F1 regression (loo_acc -0.0625, loo_f1 -0.0500) |
+| iter012 | [exploratory] Remove centre-surround blob filters from conv1 | 813 | 0.7500->0.7500 | 0.8125->0.8125 | **REJECTED** | LOO F1 regression (loo_acc +0.0000, loo_f1 -0.0308) |
+| iter013 | [exploratory] Coarse odd-phase Gabors replace the blob filters | 813 | 0.7500->0.7500 | 0.8125->0.8125 | **REJECTED** | no meaningful LOO improvement (loo_acc +0.0000, loo_f1 +0.0000) |
+| iter014 | [exploratory] Remove conv2 parallel-pair detectors | 537 | 0.7500->0.7500 | 0.8125->0.8125 | **REJECTED** | no meaningful LOO improvement (loo_acc +0.0000, loo_f1 +0.0000) |
+| iter015 | [exploratory] Remove conv3 isotropic-energy channels | 1089 | 0.7500->0.2500 | 0.8125->0.7500 | **REJECTED** | LOO F1 regression (loo_acc -0.0625, loo_f1 -0.0500) |
+| iter016 | [exploratory] Centre-only head (border weight 0) | 513 | 0.7500->1.0000 | 0.8125->0.7500 | **REJECTED** | LOO F1 regression (loo_acc -0.0625, loo_f1 -0.0500) |
+| iter017 | [exploratory] Top-half emphasis in the head | 513 | 0.7500->0.5000 | 0.8125->0.8125 | **REJECTED** | no meaningful LOO improvement (loo_acc +0.0000, loo_f1 +0.0000) |
+| iter018 | [exploratory] Break conv3 filter symmetry (replication of WSP-001 iter006) | 1089 | 0.7500->0.7500 | 0.8125->0.8125 | **REJECTED** | no meaningful LOO improvement (loo_acc +0.0000, loo_f1 +0.0000) |
+| iter019 | [exploratory] Control: pooled head with explicit uniform cell mask | 513 | 0.7500->0.2500 | 0.8125->0.6250 | **REJECTED** | LOO F1 regression (loo_acc -0.1875, loo_f1 -0.2286) |
+
+### Hypotheses (as written before each edit)
+
+* **iter001 - De-mean the head (replication of WSP-001 iter001 on a new split)**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter001 (De-mean the head (replication of WSP-001 iter001 on a new split)).
+  * Hypothesis: Subtracting the mean head weight removes the energy direction and raises val accuracy by >=1 image (0.25). Replication: WSP-001 saw lower train accuracy and no val gain; the new split tests whether that was chance.
+  * Parameters: head.weight (512), head.bias (1) [closed-form head]
+  * Expected / risks: Lower train accuracy, possible val gain. / Discards a legitimate dog-leaning energy signal.
+* **iter002 - Negative conv2 biases to restore ReLU gating**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter002 (Negative conv2 biases to restore ReLU gating).
+  * Hypothesis: bias_c = -mean(pre-activation_c over train) makes conv2 fire only for above-average evidence and lifts val >= 1 image.
+  * Parameters: conv2.bias (32) + head refit (513)
+  * Expected / risks: Sparser conv2 activations, cleaner separation. / Train-mean centring on 12 images may encode them.
+* **iter003 - Wire the dead colour pathway into conv2**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter003 (Wire the dead colour pathway into conv2).
+  * Hypothesis: Wiring colour-opponent channels 12-15 into conv2 filters 24-31 lets warm/cool evidence reach the head (val >= +1 image).
+  * Parameters: conv2.weight[24:32, 12:16] (72) + head refit (513)
+  * Expected / risks: Possible gain; colour may be a spurious cue in 12 images. / Black dogs/cats; background colour.
+* **iter004 - Wider spatial pooling in conv3 (3x3 box instead of 1-2-1 blur)**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter004 (Wider spatial pooling in conv3 (3x3 box instead of 1-2-1 blur)).
+  * Hypothesis: A uniform 3x3 box in conv3 widens the receptive field (more position tolerance) and raises val by >= 1 image.
+  * Parameters: conv3.weight (9,216) + head refit (513)
+  * Expected / risks: Small spatial smoothing effect. / Blurs fine texture cues.
+* **iter005 - Pooled-cell head (shared weights over the 16 pooled cells)**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter005 (Pooled-cell head (shared weights over the 16 pooled cells)).
+  * Hypothesis: Sharing one weight per channel over the 16 cells (32 weights) reduces variance and raises val by >= 1 image.
+  * Parameters: head.weight (512), head.bias (1) [closed-form head]
+  * Expected / risks: Less overfitting (lower train accuracy). / Loses spatial layout information.
+* **iter006 - Down-weight border cells of the head (background suppression)**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter006 (Down-weight border cells of the head (background suppression)).
+  * Hypothesis: Scaling border-cell head weights by 0.25 reduces background reliance and lifts val by >= 1 image.
+  * Parameters: head.weight border-cell entries (384 of 512), head.bias [closed-form head]
+  * Expected / risks: Less background sensitivity. / Off-centre animals lose signal.
+* **iter007 - Centroid head rule (no variance scaling)**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter007 (Centroid head rule (no variance scaling)).
+  * Hypothesis: The plain class-mean difference transfers better and lifts val by >= 1 image.
+  * Parameters: head.weight (512), head.bias (1) [closed-form head]
+  * Expected / risks: Higher val if variance estimates were the noise. / Ignores feature scale differences.
+* **iter008 - Half-strength conv3 bias centring**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter008 (Half-strength conv3 bias centring).
+  * Hypothesis: Half-strength centring gates only the weakest conv3 evidence without killing channels; val +>=1 image.
+  * Parameters: conv3.bias (32) + head refit (513)
+  * Expected / risks: Mild sparsification. / Interactions with earlier accepted edits unknown.
+* **iter009 - Full-covariance LDA head (ridge)**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter009 (Full-covariance LDA head (ridge)).
+  * Hypothesis: Full-covariance LDA with ridge 0.05 x mean variance de-correlates them. With only 12 samples (rank <= 11) it may overfit; tested as a directional check.
+  * Parameters: head.weight (512), head.bias (1) [closed-form head]
+  * Expected / risks: Likely train ~100% and val unchanged or worse (n << features). / Severe overfit.
+* **iter010 - [exploratory] Centre/border pooled head (64 shared weights)**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter010 ([exploratory] Centre/border pooled head (64 shared weights)).
+  * Hypothesis: Two shared weights per channel (centre cells, border cells) keep subject/background while cutting parameters; val +>=1 image.
+  * Parameters: head.weight (512), head.bias (1) [closed-form head]
+  * Expected / risks: Between iter005 and baseline. / 64 features still large for 12 images.
+* **iter011 - [exploratory] Remove colour-opponent filters from conv1**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter011 ([exploratory] Remove colour-opponent filters from conv1).
+  * Hypothesis: Zeroing conv1 filters 12-15 removes colour evidence from the pooled features; val +>=1 image if colour was noise.
+  * Parameters: conv1.weight[12:16] (300) + head refit (513)
+  * Expected / risks: Less memorisation. / Loses a real cue.
+* **iter012 - [exploratory] Remove centre-surround blob filters from conv1**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter012 ([exploratory] Remove centre-surround blob filters from conv1).
+  * Hypothesis: Removing them reduces noise features; val +>=1 image.
+  * Parameters: conv1.weight[8:12] (300) + head refit (513)
+  * Expected / risks: Fewer redundant features. / Loses eye/nose cues.
+* **iter013 - [exploratory] Coarse odd-phase Gabors replace the blob filters**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter013 ([exploratory] Coarse odd-phase Gabors replace the blob filters).
+  * Hypothesis: Odd-phase Gabors at 4 orientations replace blobs 8-11 and add silhouette-edge information; val +>=1 image.
+  * Parameters: conv1.weight[8:12] (300) + head refit (513)
+  * Expected / risks: Edge-boundary evidence. / n=12 cannot reveal a small gain.
+* **iter014 - [exploratory] Remove conv2 parallel-pair detectors**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter014 ([exploratory] Remove conv2 parallel-pair detectors).
+  * Hypothesis: Zeroing them lowers texture noise; val +>=1 image.
+  * Parameters: conv2.weight[16:24] (1,152) + head refit (513)
+  * Expected / risks: Less texture dependence. / Loses fur-texture cue.
+* **iter015 - [exploratory] Remove conv3 isotropic-energy channels**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter015 ([exploratory] Remove conv3 isotropic-energy channels).
+  * Hypothesis: Zeroing conv3 24-31 removes redundant energy features; val +>=1 image.
+  * Parameters: conv3.weight[24:32] (2,304) + head refit (513)
+  * Expected / risks: Smaller redundant block. / Energy is partly informative.
+* **iter016 - [exploratory] Centre-only head (border weight 0)**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter016 ([exploratory] Centre-only head (border weight 0)).
+  * Hypothesis: Setting border weights to exactly 0 removes background entirely; val +>=1 image if background is a spurious cue.
+  * Parameters: head.weight (512 incl. 384 zeroed), head.bias
+  * Expected / risks: Subject-only decision. / Off-centre subjects.
+* **iter017 - [exploratory] Top-half emphasis in the head**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter017 ([exploratory] Top-half emphasis in the head).
+  * Hypothesis: Weighting the top two pooled rows x1 and the bottom two x0.25 sharpens face evidence; val +>=1 image.
+  * Parameters: head.weight (512), head.bias [closed-form head]
+  * Expected / risks: Less floor influence. / Arbitrary prior about framing.
+* **iter018 - [exploratory] Break conv3 filter symmetry (replication of WSP-001 iter006)**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter018 ([exploratory] Break conv3 filter symmetry (replication of WSP-001 iter006)).
+  * Hypothesis: Eight distinct spatial kernels (vertical, horizontal, diagonals, left, right, top, bottom) give distinct layout features; val +>=1 image.
+  * Parameters: conv3.weight[24:32, 24:32] (576) + head refit (513)
+  * Expected / risks: More informative last-layer features. / Encodes arbitrary position.
+* **iter019 - [exploratory] Control: pooled head with explicit uniform cell mask**
+  * Observed: WSP-006 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500, 5-fold CV 0.833, pooled leave-one-out over all 16 train+val images 0.750 (12/16), LOO F1 0.750. Decision metric is pooled LOO accuracy (rule v3). Same hypothesis as WSP-005 iter019 ([exploratory] Control: pooled head with explicit uniform cell mask).
+  * Hypothesis: A pooled head built with an explicit all-ones mask reproduces iter005 exactly (train .833, CV .833); a difference would mean a code-path bug.
+  * Parameters: head.weight (512), head.bias [closed-form head]
+  * Expected / risks: Identical to iter005 -> rejected again. / None; diagnostic.
+

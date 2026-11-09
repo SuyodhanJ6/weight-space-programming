@@ -11,6 +11,7 @@ All numbers are read from the experiment artifacts. 'Test' is the sealed split r
 | wsp-003 | 8,000 / 3,000 / 6,000 | 21 | 4 (iter001, iter005, iter009, iter013) | 60.1% | 76.6% | 60.7% | 77.1% | PASSED |
 | wsp-004 | 8,000 / 3,000 / 3,884 | 3 | 0 (none) | 78.4% | 78.4% | 78.0% | 78.0% | PASSED |
 | wsp-005 | 12 / 4 / 4 | 19 | 0 (none) | 50.0% | 50.0% | 75.0% | 75.0% | PASSED |
+| wsp-006 | 12 / 4 / 4 | 19 | 1 (iter003) | 50.0% | 75.0% | 75.0% | 75.0% | PASSED |
 
 Note: WSP-001 'val' has 4 images and its test 4 images: its numbers are not statistically meaningful.
 
@@ -71,6 +72,17 @@ Note: WSP-001 'val' has 4 images and its test 4 images: its numbers are not stat
 * Final: train 91.7%, val 50.0%, CV 91.7%
 * Sealed test, **initial** (`checkpoints/wsp-005/iter000_initial.pt`): accuracy 75.0% (95% CI 30.1%-95.4%), precision 1.000, recall 0.500, F1 0.667, confusion {'tp': 1, 'fp': 0, 'tn': 2, 'fn': 1}
 * Sealed test, **final** (`checkpoints/wsp-005/iter000_initial.pt`): accuracy 75.0% (95% CI 30.1%-95.4%), precision 1.000, recall 0.500, F1 0.667, confusion {'tp': 1, 'fp': 0, 'tn': 2, 'fn': 1}
+* Paired test `paired`: {"n": 4, "final_right_initial_wrong": 0, "initial_right_final_wrong": 0, "mcnemar_exact_p_two_sided": 1.0}
+* Audit: passed = **True**; iterations replayed hash-exact: 19
+
+## wsp-006
+
+* Status: **complete**; last completed: `iter019`; final checkpoint: `checkpoints/wsp-006/iter003.pt`
+* Architecture: CatDogNet: conv5x5(3->16)-pool-conv3x3(16->32)-pool-conv3x3(32->32)-avgpool4x4-linear(512->1)
+* Baseline (iter000): train 91.7%, val 50.0%, LOO(16) 75.0%
+* Final: train 91.7%, val 75.0%, LOO(16) 81.2%
+* Sealed test, **initial** (`checkpoints/wsp-006/iter000_initial.pt`): accuracy 75.0% (95% CI 30.1%-95.4%), precision 1.000, recall 0.500, F1 0.667, confusion {'tp': 1, 'fp': 0, 'tn': 2, 'fn': 1}
+* Sealed test, **final** (`checkpoints/wsp-006/iter003.pt`): accuracy 75.0% (95% CI 30.1%-95.4%), precision 1.000, recall 0.500, F1 0.667, confusion {'tp': 1, 'fp': 0, 'tn': 2, 'fn': 1}
 * Paired test `paired`: {"n": 4, "final_right_initial_wrong": 0, "initial_right_final_wrong": 0, "mcnemar_exact_p_two_sided": 1.0}
 * Audit: passed = **True**; iterations replayed hash-exact: 19
 

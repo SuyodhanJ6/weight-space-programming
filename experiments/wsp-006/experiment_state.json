@@ -1,0 +1,142 @@
+{
+  "experiment_id": "wsp-006",
+  "status": "complete",
+  "architecture": "CatDogNet: conv5x5(3->16)-pool-conv3x3(16->32)-pool-conv3x3(32->32)-avgpool4x4-linear(512->1)",
+  "iteration": 19,
+  "last_completed": "iter019",
+  "completed_ids": [
+    "iter000",
+    "iter001",
+    "iter002",
+    "iter003",
+    "iter004",
+    "iter005",
+    "iter006",
+    "iter007",
+    "iter008",
+    "iter009",
+    "iter010",
+    "iter011",
+    "iter012",
+    "iter013",
+    "iter014",
+    "iter015",
+    "iter016",
+    "iter017",
+    "iter018",
+    "iter019"
+  ],
+  "accepted_ids": [
+    "iter000",
+    "iter003"
+  ],
+  "rejected_ids": [
+    "iter001",
+    "iter002",
+    "iter004",
+    "iter005",
+    "iter006",
+    "iter007",
+    "iter008",
+    "iter009",
+    "iter010",
+    "iter011",
+    "iter012",
+    "iter013",
+    "iter014",
+    "iter015",
+    "iter016",
+    "iter017",
+    "iter018",
+    "iter019"
+  ],
+  "baseline_checkpoint": "checkpoints/wsp-006/iter000_initial.pt",
+  "baseline_sha256": "b1e3a9fa1d321943fe508db267b02e7529fd368353485a75ab8b44dbd1c166e4",
+  "accepted_checkpoint": "checkpoints/wsp-006/iter003.pt",
+  "accepted_sha256": "f10262fca1090d3a37f8e623be2f36f81743d8dd35244e3d33b713dec6194da0",
+  "head_cfg": {
+    "rule": "lda",
+    "cell_mask": null
+  },
+  "metrics": {
+    "loo_acc": 0.8125,
+    "loo_f1": 0.8,
+    "loo_margin": 1.0927,
+    "train_acc": 0.9167,
+    "val_acc": 0.75,
+    "val_f1": 0.6667,
+    "val_margin": 0.171,
+    "cv_acc": 0.9167,
+    "cv_margin": 1.1598
+  },
+  "baseline_metrics": {
+    "loo_acc": 0.75,
+    "loo_f1": 0.75,
+    "loo_margin": 0.8846,
+    "train_acc": 0.9167,
+    "val_acc": 0.5,
+    "val_f1": 0.5,
+    "val_margin": -0.133,
+    "cv_acc": 0.8333,
+    "cv_margin": 1.0472
+  },
+  "splits": {
+    "manifest": "experiments/wsp-006/manifest.json"
+  },
+  "manifest": "experiments/wsp-006/manifest.json",
+  "test_evaluated": true,
+  "reference_checkpoint": null,
+  "acceptance_rule": "wsp-006, rule v3, pre-registered before any edit (replaces v2 after WSP-005 rejected 19 of 19 edits). Accept iff pooled leave-one-out accuracy over ALL 16 train+val images (head rule refit on 15, predict 1) rises by >= 1 image (0.0625) over the accepted checkpoint AND leave-one-out F1 does not fall. Train accuracy, the 4-image val split alone and 5-fold CV are recorded but never used to accept. The sealed test split is never read during iterations.",
+  "next_action": "write next iterations in src/iterations.py or run final",
+  "updated": "2026-11-09T22:04:05",
+  "test_unsealed_at": "2026-11-09T22:04:12",
+  "test_results": {
+    "initial": {
+      "checkpoint": "checkpoints/wsp-006/iter000_initial.pt",
+      "n": 4,
+      "accuracy": 0.75,
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1": 0.6666666666666666,
+      "confusion": {
+        "tp": 1,
+        "fp": 0,
+        "tn": 2,
+        "fn": 1
+      },
+      "bce_loss_metric": 0.5164303779602051,
+      "mean_signed_margin": 1.5311278104782104,
+      "accuracy_ci95": [
+        0.3006,
+        0.9544
+      ]
+    },
+    "final": {
+      "checkpoint": "checkpoints/wsp-006/iter003.pt",
+      "n": 4,
+      "accuracy": 0.75,
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1": 0.6666666666666666,
+      "confusion": {
+        "tp": 1,
+        "fp": 0,
+        "tn": 2,
+        "fn": 1
+      },
+      "bce_loss_metric": 0.34732887148857117,
+      "mean_signed_margin": 1.206114649772644,
+      "accuracy_ci95": [
+        0.3006,
+        0.9544
+      ]
+    },
+    "paired": {
+      "n": 4,
+      "final_right_initial_wrong": 0,
+      "initial_right_final_wrong": 0,
+      "mcnemar_exact_p_two_sided": 1.0
+    }
+  },
+  "test_time": "2026-11-09T22:04:12"
+}

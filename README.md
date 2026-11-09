@@ -13,6 +13,7 @@ fine-tuning, pretrained weights, or random search)?
 | **WSP-003** | 8,000 / 3,000 / 6,000 | 16/32/32 | **60.7% → 77.1%** | Real gain, but see below |
 | **WSP-004** | 8,000 / 3,000 / 3,884 fresh | wide 48/96/96 | **78.0%** (95% CI 76.7–79.3) | WSP-003 model scores 76.7% on the same images |
 | WSP-005 | 12 / 4 / 4 (same 20 images, new split) | 16/32/32 | 3/4 → 3/4 (75%, CI 30–95%) | 19 of 19 edits rejected; replication of the original 20-image mission, no gain |
+| WSP-006 | 12 / 4 / 4 (same 20 images, new split, new rule) | 16/32/32 | 3/4 → 3/4 (75%, CI 30–95%) | rule changed to pooled leave-one-out: 1 of 19 edits accepted (colour wiring), no test change |
 
 *Test = a held-out split that is sealed (folder mode 000) and read exactly once per experiment.*
 
@@ -41,7 +42,7 @@ Interactive version: [`docs/wsp-end-to-end-flow.html`](docs/wsp-end-to-end-flow.
 
 - Every weight edit goes through `src/weight_programmer.py` and is logged with a hypothesis, old/new values, metrics and a decision.
 - Accept rule (WSP-002 to 004): validation accuracy up by 1 pt or more, 5-fold CV not down more than 1 pt, F1 not down more than 1 pt. Training accuracy is never used.
-- Automated audit (`src/weight_audit.py`): static AST scan, runtime checks (grad off, no optimizers), hash-exact replay of all iterations. **All five audits pass** (WSP-005 with one disclosed sign-of-zero logging warning), and independent sub-agent reviews of WSP-001 to 004 found no violations.
+- Automated audit (`src/weight_audit.py`): static AST scan, runtime checks (grad off, no optimizers), hash-exact replay of all iterations. **All six audits pass** (WSP-005 with one disclosed sign-of-zero logging warning), and independent sub-agent reviews of WSP-001 to 004 found no violations.
 - Earlier experiments' files are read-only and hash-protected (190 hashes verified unchanged).
 
 ## Limitations and disclosures
