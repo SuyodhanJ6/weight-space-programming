@@ -26,3 +26,6 @@ dataset/
 # Local tooling
 .archify/
 .DS_Store
+
+# Diagram build receipts contain local absolute paths
+docs/wsp-end-to-end-flow.*.json
