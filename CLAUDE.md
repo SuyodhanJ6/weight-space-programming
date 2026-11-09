@@ -25,7 +25,7 @@ The repository already provides the required architecture and most WSP infrastru
 - `src/iterations.py`: append-only catalog of agent-authored hypotheses and explicit edits.
 - `src/evaluator.py`: forward-only metrics and leave-one-out diagnostic.
 - `src/experiment_runner.py`: the resumable runner. Despite its role, it is not a conventional training loop.
-- `src/image_inspector.py` and `src/data.py`: local dataset inspection, manifest, and split loading.
+- `src/data.py`: local dataset manifest and split loading. Image inspection tools may be used as optional aids, but are not required for Claude to inspect images.
 - `checkpoints/`, `experiments/`, `logs/`, and `reports/`: durable experiment artifacts.
 
 Keep this design unless a documented, evidence-based need requires a focused change. Do not start an experiment or alter model weights merely because you are reading these instructions.
@@ -38,6 +38,8 @@ The experiment must use only local resources and explicit direct programming. Ne
 - gradient descent, SGD, Adam, AdamW, any optimizer, conventional training loops, fine-tuning, hyperparameter searches, evolutionary/random parameter searches, or hidden automatic optimization;
 - pretrained models, pretrained weights, transfer learning, downloaded feature extractors, existing trained checkpoints, external classifiers, or model inference APIs;
 - browsing, web search, downloads, package installation from the internet, external APIs, `curl`, `wget`, remote datasets, or additional images.
+
+When vision capability is available, Claude should inspect the original local cat/dog images directly and record relevant visible properties. This direct visual inspection is for human-readable observation and hypothesis formation only. Claude's vision capability must never provide labels, embeddings, features, predictions, or other outputs as inputs to the neural network. The scratch network must receive the raw image data through its own forward path and use only newly initialized and explicitly programmed parameters.
 
 The Claude service connection needed to operate the agent is permitted, but must not be used as a route to external experiment resources or external model inference. If a needed local dependency or resource is missing, record it as a blocker; do not download it.
 
@@ -95,7 +97,7 @@ Do not repeat completed experiments without recording a specific scientific reas
 
 ## Runner and persistent recovery
 
-`src/experiment_runner.py` is the main autonomous WSP orchestrator (not a conventional training script). Preserve its `init`, `run`, `status`, and one-time `final` behavior. It must restore the latest valid accepted checkpoint, run explicit WSP iterations, execute periodic integrity checks, and never call an optimizer or gradient update.
+`src/experiment_runner.py` is the main autonomous WSP orchestrator. `wsp_train.py`, where present, is an experiment runner and entry point, not a conventional training script. Preserve the runner's `init`, `run`, `status`, and one-time `final` behavior. It must restore the latest valid accepted checkpoint, run explicit WSP iterations, execute periodic integrity checks, and never call an optimizer or gradient update.
 
 Persist and atomically update state after every completed iteration. Maintain at least:
 

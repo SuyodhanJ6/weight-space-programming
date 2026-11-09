@@ -54,10 +54,15 @@ def inspect_parameters(model: CatDogNet) -> list[dict]:
     return rows
 
 
+def differs(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
+    """Bit-exact inequality: also catches -0.0 vs +0.0 (equal by value, different bits and different hashes)."""
+    return (a != b) | (a.contiguous().view(torch.int32) != b.contiguous().view(torch.int32))
+
+
 def compare_parameters(before: dict[str, torch.Tensor], after: dict[str, torch.Tensor]) -> dict:
     out = {}
     for key in before:
-        mask = before[key] != after[key]
+        mask = differs(before[key], after[key])
         if mask.any():
             out[key] = {"changed": int(mask.sum()), "total": mask.numel(),
                         "max_abs_delta": float((after[key] - before[key]).abs().max()),
@@ -100,7 +105,7 @@ class WeightProgrammer:
 
     def _record(self, op: str, name: str, selector: str, reason: str,
                 old: torch.Tensor, new: torch.Tensor) -> dict:
-        changed = old != new
+        changed = differs(old, new)
         entry = {"op": op, "parameter": name, "selector": selector, "reason": reason,
                  "n_changed": int(changed.sum()),
                  "sample_old": [round(float(v), 6) for v in old[changed].flatten()[:SAMPLE_VALUES]],

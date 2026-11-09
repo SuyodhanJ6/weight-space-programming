@@ -10,6 +10,7 @@ All numbers are read from the experiment artifacts. 'Test' is the sealed split r
 | wsp-002 | 1,000 / 600 / 2,000 | 27 | 1 (iter004) | 57.2% | 60.7% | 62.2% | 61.6% | PASSED |
 | wsp-003 | 8,000 / 3,000 / 6,000 | 21 | 4 (iter001, iter005, iter009, iter013) | 60.1% | 76.6% | 60.7% | 77.1% | PASSED |
 | wsp-004 | 8,000 / 3,000 / 3,884 | 3 | 0 (none) | 78.4% | 78.4% | 78.0% | 78.0% | PASSED |
+| wsp-005 | 12 / 4 / 4 | 19 | 0 (none) | 50.0% | 50.0% | 75.0% | 75.0% | PASSED |
 
 Note: WSP-001 'val' has 4 images and its test 4 images: its numbers are not statistically meaningful.
 
@@ -61,4 +62,15 @@ Note: WSP-001 'val' has 4 images and its test 4 images: its numbers are not stat
 * Paired test `paired_vs_reference`: {"n": 3884, "final_right_reference_wrong": 199, "reference_right_final_wrong": 146, "mcnemar_exact_p_two_sided": 0.0050434268033464295}
 * Controls (validation): {"n_val": 3000, "baseline_val_acc": 0.7843, "final_val_acc": 0.7843, "mcnemar_exact_p_two_sided": 1.0, "attribution_val_acc": {"baseline_extractor + diagonal LDA head": 0.6293, "baseline_extractor + lda_full head": 0.7843, "final_extractor + diagonal LDA head": 0.6293, "final_extractor + lda_full head (= final model)": 0.7843}, "random_conv_features_same_head_val_acc": {"mean": 0.7498, "std": 0.0029, "min": 0.7463, "max": 0.754}, "frac_random_ge_baseline": 0.0, "frac_random_ge_final": 0.0, "label_shuffled_head_on_final_extractor_val_acc": {"mean": 0.4998, "std": 0.0198, "max": 0.553}, "frac_shuffle_ge_final": 0.0}
 * Audit: passed = **True**; iterations replayed hash-exact: 3
+
+## wsp-005
+
+* Status: **complete**; last completed: `iter019`; final checkpoint: `checkpoints/wsp-005/iter000_initial.pt`
+* Architecture: CatDogNet: conv5x5(3->16)-pool-conv3x3(16->32)-pool-conv3x3(32->32)-avgpool4x4-linear(512->1)
+* Baseline (iter000): train 91.7%, val 50.0%, CV 91.7%
+* Final: train 91.7%, val 50.0%, CV 91.7%
+* Sealed test, **initial** (`checkpoints/wsp-005/iter000_initial.pt`): accuracy 75.0% (95% CI 30.1%-95.4%), precision 1.000, recall 0.500, F1 0.667, confusion {'tp': 1, 'fp': 0, 'tn': 2, 'fn': 1}
+* Sealed test, **final** (`checkpoints/wsp-005/iter000_initial.pt`): accuracy 75.0% (95% CI 30.1%-95.4%), precision 1.000, recall 0.500, F1 0.667, confusion {'tp': 1, 'fp': 0, 'tn': 2, 'fn': 1}
+* Paired test `paired`: {"n": 4, "final_right_initial_wrong": 0, "initial_right_final_wrong": 0, "mcnemar_exact_p_two_sided": 1.0}
+* Audit: passed = **True**; iterations replayed hash-exact: 19
 

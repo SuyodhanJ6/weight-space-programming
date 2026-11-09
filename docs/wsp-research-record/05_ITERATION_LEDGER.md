@@ -395,3 +395,125 @@ are in `data/<experiment>/experiment_history.json` and `parameter_changes.json`.
   * Parameters: conv1.weight[44:48] (4x3x5x5 = 300) + head refit (1,537, lda_full)
   * Expected / risks: Gain if coarse step edges are informative. / Only 4 orientations at the coarse band.
 
+## wsp-005 (19 iterations)
+
+| id | title | params | val acc | CV | decision | reason |
+|---|---|---|---|---|---|---|
+| iter001 | De-mean the head (replication of WSP-001 iter001 on a new split) | 513 | 0.5000->0.7500 | 0.9167->0.5000 | **REJECTED** | diagnostic regression (cv -0.4167, val_f1 +0.3000) |
+| iter002 | Negative conv2 biases to restore ReLU gating | 545 | 0.5000->0.5000 | 0.9167->0.9167 | **REJECTED** | no meaningful val improvement (val +0.0000, cv +0.0000, val_f1 +0.0000) |
+| iter003 | Wire the dead colour pathway into conv2 | 585 | 0.5000->0.5000 | 0.9167->0.9167 | **REJECTED** | no meaningful val improvement (val +0.0000, cv +0.0000, val_f1 +0.0000) |
+| iter004 | Wider spatial pooling in conv3 (3x3 box instead of 1-2-1 blur) | 1809 | 0.5000->0.5000 | 0.9167->0.9167 | **REJECTED** | no meaningful val improvement (val +0.0000, cv +0.0000, val_f1 +0.0000) |
+| iter005 | Pooled-cell head (shared weights over the 16 pooled cells) | 513 | 0.5000->0.5000 | 0.9167->0.8333 | **REJECTED** | diagnostic regression (cv -0.0834, val_f1 +0.0000) |
+| iter006 | Down-weight border cells of the head (background suppression) | 513 | 0.5000->0.5000 | 0.9167->0.9167 | **REJECTED** | no meaningful val improvement (val +0.0000, cv +0.0000, val_f1 +0.0000) |
+| iter007 | Centroid head rule (no variance scaling) | 513 | 0.5000->0.5000 | 0.9167->0.9167 | **REJECTED** | no meaningful val improvement (val +0.0000, cv +0.0000, val_f1 +0.0000) |
+| iter008 | Half-strength conv3 bias centring | 545 | 0.5000->0.5000 | 0.9167->0.9167 | **REJECTED** | no meaningful val improvement (val +0.0000, cv +0.0000, val_f1 +0.0000) |
+| iter009 | Full-covariance LDA head (ridge) | 513 | 0.5000->0.5000 | 0.9167->0.6667 | **REJECTED** | diagnostic regression (cv -0.2500, val_f1 +0.0000) |
+| iter010 | [exploratory] Centre/border pooled head (64 shared weights) | 513 | 0.5000->0.5000 | 0.9167->0.8333 | **REJECTED** | diagnostic regression (cv -0.0834, val_f1 +0.0000) |
+| iter011 | [exploratory] Remove colour-opponent filters from conv1 | 250 | 0.5000->0.5000 | 0.9167->0.9167 | **REJECTED** | no meaningful val improvement (val +0.0000, cv +0.0000, val_f1 +0.0000) |
+| iter012 | [exploratory] Remove centre-surround blob filters from conv1 | 813 | 0.5000->0.5000 | 0.9167->0.9167 | **REJECTED** | no meaningful val improvement (val +0.0000, cv +0.0000, val_f1 +0.0000) |
+| iter013 | [exploratory] Coarse odd-phase Gabors replace the blob filters | 813 | 0.5000->0.5000 | 0.9167->0.9167 | **REJECTED** | no meaningful val improvement (val +0.0000, cv +0.0000, val_f1 +0.0000) |
+| iter014 | [exploratory] Remove conv2 parallel-pair detectors | 537 | 0.5000->0.5000 | 0.9167->0.9167 | **REJECTED** | no meaningful val improvement (val +0.0000, cv +0.0000, val_f1 +0.0000) |
+| iter015 | [exploratory] Remove conv3 isotropic-energy channels | 1089 | 0.5000->0.5000 | 0.9167->0.9167 | **REJECTED** | no meaningful val improvement (val +0.0000, cv +0.0000, val_f1 +0.0000) |
+| iter016 | [exploratory] Centre-only head (border weight 0) | 513 | 0.5000->0.5000 | 0.9167->0.8333 | **REJECTED** | diagnostic regression (cv -0.0834, val_f1 +0.0000) |
+| iter017 | [exploratory] Top-half emphasis in the head | 513 | 0.5000->0.5000 | 0.9167->0.8333 | **REJECTED** | diagnostic regression (cv -0.0834, val_f1 +0.0000) |
+| iter018 | [exploratory] Break conv3 filter symmetry (replication of WSP-001 iter006) | 1089 | 0.5000->0.5000 | 0.9167->0.9167 | **REJECTED** | no meaningful val improvement (val +0.0000, cv +0.0000, val_f1 +0.0000) |
+| iter019 | [exploratory] Control: pooled head with explicit uniform cell mask | 513 | 0.5000->0.5000 | 0.9167->0.8333 | **REJECTED** | diagnostic regression (cv -0.0834, val_f1 +0.0000) |
+
+### Hypotheses (as written before each edit)
+
+* **iter001 - De-mean the head (replication of WSP-001 iter001 on a new split)**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy.
+  * Hypothesis: Subtracting the mean head weight removes the energy direction and raises val accuracy by >=1 image (0.25). Replication: WSP-001 saw lower train accuracy and no val gain; the new split tests whether that was chance.
+  * Parameters: head.weight (512), head.bias (1) [closed-form head]
+  * Expected / risks: Lower train accuracy, possible val gain. / Discards a legitimate dog-leaning energy signal.
+* **iter002 - Negative conv2 biases to restore ReLU gating**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy.
+  * Hypothesis: bias_c = -mean(pre-activation_c over train) makes conv2 fire only for above-average evidence and lifts val >= 1 image.
+  * Parameters: conv2.bias (32) + head refit (513)
+  * Expected / risks: Sparser conv2 activations, cleaner separation. / Train-mean centring on 12 images may encode them.
+* **iter003 - Wire the dead colour pathway into conv2**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. conv2 weights from colour channels 12-15 are exactly zero: the net is colour-blind.
+  * Hypothesis: Wiring colour-opponent channels 12-15 into conv2 filters 24-31 lets warm/cool evidence reach the head (val >= +1 image).
+  * Parameters: conv2.weight[24:32, 12:16] (72) + head refit (513)
+  * Expected / risks: Possible gain; colour may be a spurious cue in 12 images. / Black dogs/cats; background colour.
+* **iter004 - Wider spatial pooling in conv3 (3x3 box instead of 1-2-1 blur)**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. Web photos vary in pose and position; the 1-2-1 blur has an effective footprint of about 2 pixels.
+  * Hypothesis: A uniform 3x3 box in conv3 widens the receptive field (more position tolerance) and raises val by >= 1 image.
+  * Parameters: conv3.weight (9,216) + head refit (513)
+  * Expected / risks: Small spatial smoothing effect. / Blurs fine texture cues.
+* **iter005 - Pooled-cell head (shared weights over the 16 pooled cells)**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. The 512-weight head has 513 free values fit to 12 images.
+  * Hypothesis: Sharing one weight per channel over the 16 cells (32 weights) reduces variance and raises val by >= 1 image.
+  * Parameters: head.weight (512), head.bias (1) [closed-form head]
+  * Expected / risks: Less overfitting (lower train accuracy). / Loses spatial layout information.
+* **iter006 - Down-weight border cells of the head (background suppression)**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. Border cells hold fences, cages and grass.
+  * Hypothesis: Scaling border-cell head weights by 0.25 reduces background reliance and lifts val by >= 1 image.
+  * Parameters: head.weight border-cell entries (384 of 512), head.bias [closed-form head]
+  * Expected / risks: Less background sensitivity. / Off-centre animals lose signal.
+* **iter007 - Centroid head rule (no variance scaling)**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. With n=12 the per-feature variance estimates are very noisy.
+  * Hypothesis: The plain class-mean difference transfers better and lifts val by >= 1 image.
+  * Parameters: head.weight (512), head.bias (1) [closed-form head]
+  * Expected / risks: Higher val if variance estimates were the noise. / Ignores feature scale differences.
+* **iter008 - Half-strength conv3 bias centring**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. conv3 is 100% active: the last layer never gates.
+  * Hypothesis: Half-strength centring gates only the weakest conv3 evidence without killing channels; val +>=1 image.
+  * Parameters: conv3.bias (32) + head refit (513)
+  * Expected / risks: Mild sparsification. / Interactions with earlier accepted edits unknown.
+* **iter009 - Full-covariance LDA head (ridge)**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. Diagonal LDA ignores correlation between channels; WSP-003 found full-covariance LDA gave most of its gain at n=8,000.
+  * Hypothesis: Full-covariance LDA with ridge 0.05 x mean variance de-correlates them. With only 12 samples (rank <= 11) it may overfit; tested as a directional check.
+  * Parameters: head.weight (512), head.bias (1) [closed-form head]
+  * Expected / risks: Likely train ~100% and val unchanged or worse (n << features). / Severe overfit.
+* **iter010 - [exploratory] Centre/border pooled head (64 shared weights)**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. Round 1: 9/9 edits rejected; only iter001 raised val (0.5->0.75) but CV fell 0.917->0.5. iter005 (32 shared weights) lowered CV 0.917->0.833 but kept val.
+  * Hypothesis: Two shared weights per channel (centre cells, border cells) keep subject/background while cutting parameters; val +>=1 image.
+  * Parameters: head.weight (512), head.bias (1) [closed-form head]
+  * Expected / risks: Between iter005 and baseline. / 64 features still large for 12 images.
+* **iter011 - [exploratory] Remove colour-opponent filters from conv1**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. Round 1: 9/9 edits rejected; only iter001 raised val (0.5->0.75) but CV fell 0.917->0.5. iter003 (wiring colour into conv2) only raised train to 1.0, a memorisation sign.
+  * Hypothesis: Zeroing conv1 filters 12-15 removes colour evidence from the pooled features; val +>=1 image if colour was noise.
+  * Parameters: conv1.weight[12:16] (300) + head refit (513)
+  * Expected / risks: Less memorisation. / Loses a real cue.
+* **iter012 - [exploratory] Remove centre-surround blob filters from conv1**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. Round 1: 9/9 edits rejected; only iter001 raised val (0.5->0.75) but CV fell 0.917->0.5.
+  * Hypothesis: Removing them reduces noise features; val +>=1 image.
+  * Parameters: conv1.weight[8:12] (300) + head refit (513)
+  * Expected / risks: Fewer redundant features. / Loses eye/nose cues.
+* **iter013 - [exploratory] Coarse odd-phase Gabors replace the blob filters**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. Round 1: 9/9 edits rejected; only iter001 raised val (0.5->0.75) but CV fell 0.917->0.5. WSP-004 found odd-phase (step-edge) filters the most valuable group at n=8,000.
+  * Hypothesis: Odd-phase Gabors at 4 orientations replace blobs 8-11 and add silhouette-edge information; val +>=1 image.
+  * Parameters: conv1.weight[8:12] (300) + head refit (513)
+  * Expected / risks: Edge-boundary evidence. / n=12 cannot reveal a small gain.
+* **iter014 - [exploratory] Remove conv2 parallel-pair detectors**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. Round 1: 9/9 edits rejected; only iter001 raised val (0.5->0.75) but CV fell 0.917->0.5.
+  * Hypothesis: Zeroing them lowers texture noise; val +>=1 image.
+  * Parameters: conv2.weight[16:24] (1,152) + head refit (513)
+  * Expected / risks: Less texture dependence. / Loses fur-texture cue.
+* **iter015 - [exploratory] Remove conv3 isotropic-energy channels**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. Round 1: 9/9 edits rejected; only iter001 raised val (0.5->0.75) but CV fell 0.917->0.5. Baseline logit correlates only +0.17 with pixel energy, but 8 of 32 conv3 channels are pure energy meters.
+  * Hypothesis: Zeroing conv3 24-31 removes redundant energy features; val +>=1 image.
+  * Parameters: conv3.weight[24:32] (2,304) + head refit (513)
+  * Expected / risks: Smaller redundant block. / Energy is partly informative.
+* **iter016 - [exploratory] Centre-only head (border weight 0)**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. Round 1: 9/9 edits rejected; only iter001 raised val (0.5->0.75) but CV fell 0.917->0.5. iter006 (border x0.25) changed nothing.
+  * Hypothesis: Setting border weights to exactly 0 removes background entirely; val +>=1 image if background is a spurious cue.
+  * Parameters: head.weight (512 incl. 384 zeroed), head.bias
+  * Expected / risks: Subject-only decision. / Off-centre subjects.
+* **iter017 - [exploratory] Top-half emphasis in the head**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. Round 1: 9/9 edits rejected; only iter001 raised val (0.5->0.75) but CV fell 0.917->0.5. Faces and heads sit in the upper half of most framed pet photos; bodies/floors in the lower half.
+  * Hypothesis: Weighting the top two pooled rows x1 and the bottom two x0.25 sharpens face evidence; val +>=1 image.
+  * Parameters: head.weight (512), head.bias [closed-form head]
+  * Expected / risks: Less floor influence. / Arbitrary prior about framing.
+* **iter018 - [exploratory] Break conv3 filter symmetry (replication of WSP-001 iter006)**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. Round 1: 9/9 edits rejected; only iter001 raised val (0.5->0.75) but CV fell 0.917->0.5. conv3 filters 24-31 produce identical outputs, so the head counts one feature 8 times.
+  * Hypothesis: Eight distinct spatial kernels (vertical, horizontal, diagonals, left, right, top, bottom) give distinct layout features; val +>=1 image.
+  * Parameters: conv3.weight[24:32, 24:32] (576) + head refit (513)
+  * Expected / risks: More informative last-layer features. / Encodes arbitrary position.
+* **iter019 - [exploratory] Control: pooled head with explicit uniform cell mask**
+  * Observed: WSP-005 baseline (16/32/32 hand filters, diagonal-LDA head on 12 train images): train 0.917, val 0.500 (2 of 4 wrong: cat_07 scored dog +1.18, dog_09 scored cat -1.07), 5-fold CV 0.917. Head weights nearly all positive (mean +0.113); conv2 ReLU 93% active, conv3 100% active (near-linear); logit r=+0.80 with label, +0.17 with pixel energy. Round 1: 9/9 edits rejected; only iter001 raised val (0.5->0.75) but CV fell 0.917->0.5. iter005's regression could come from the pooled rule or from the head-fitting path.
+  * Hypothesis: A pooled head built with an explicit all-ones mask reproduces iter005 exactly (train .833, CV .833); a difference would mean a code-path bug.
+  * Parameters: head.weight (512), head.bias [closed-form head]
+  * Expected / risks: Identical to iter005 -> rejected again. / None; diagnostic.
+

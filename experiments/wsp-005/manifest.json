@@ -1,0 +1,162 @@
+[
+  {
+    "path": "dataset/wsp-005/images/train/cat_03.jpg",
+    "label": 0,
+    "split": "train",
+    "sha256": "34528357322456f5489e6bb089f4e09838f69c1ccc1881ace2175302cd3aa863",
+    "w": 500,
+    "h": 304
+  },
+  {
+    "path": "dataset/wsp-005/images/train/cat_04.jpg",
+    "label": 0,
+    "split": "train",
+    "sha256": "ea1422dec44e9adbad9e8d72623467a8b2dd98a64a75c3aa0c10fd546cd1f269",
+    "w": 440,
+    "h": 500
+  },
+  {
+    "path": "dataset/wsp-005/images/train/cat_02.jpg",
+    "label": 0,
+    "split": "train",
+    "sha256": "8e6e5c829763483ee3fdc0c92cf2d0117d502d4206473102d48019ce25e37323",
+    "w": 500,
+    "h": 425
+  },
+  {
+    "path": "dataset/wsp-005/images/train/cat_01.jpg",
+    "label": 0,
+    "split": "train",
+    "sha256": "84e6c6f72963c53af66763ebe947e622362006f5d9feaf9b480d3cd4533ef94b",
+    "w": 397,
+    "h": 500
+  },
+  {
+    "path": "dataset/wsp-005/images/train/cat_09.jpg",
+    "label": 0,
+    "split": "train",
+    "sha256": "822ae25a3d97c3b6ac412e9b1246a6cdff4a6f2bc27e4afce124e8b7536055ef",
+    "w": 500,
+    "h": 352
+  },
+  {
+    "path": "dataset/wsp-005/images/train/cat_08.jpg",
+    "label": 0,
+    "split": "train",
+    "sha256": "6fc03bdbd7b3929c1759aa210f8fe14568862eeb2a7eaabaa4eab850d31a9fb4",
+    "w": 500,
+    "h": 375
+  },
+  {
+    "path": "dataset/wsp-005/images/val/cat_07.jpg",
+    "label": 0,
+    "split": "val",
+    "sha256": "73da2ac34c3d04b1c525ccdf211072dba5cb01d563c2642de79888d3a9ae5de7",
+    "w": 500,
+    "h": 472
+  },
+  {
+    "path": "dataset/wsp-005/images/val/cat_06.jpg",
+    "label": 0,
+    "split": "val",
+    "sha256": "c6d4d0d8aefdcb012fb6d01b3c84c44c2c734a4279abbf65b07fa6b986f3fc57",
+    "w": 448,
+    "h": 336
+  },
+  {
+    "path": "dataset/wsp-005/sealed_test/cat_05.jpg",
+    "label": 0,
+    "split": "test",
+    "sha256": "4d30684c0e88434545c7b128d31750e070789a8c6da247f110bd97b4e9fe7c7f",
+    "w": 350,
+    "h": 262
+  },
+  {
+    "path": "dataset/wsp-005/sealed_test/cat_10.jpg",
+    "label": 0,
+    "split": "test",
+    "sha256": "98bcd2d9995177883d5e6fde04ddb7ac7174d20bbf6a3dc32eb92dc748d4e774",
+    "w": 353,
+    "h": 500
+  },
+  {
+    "path": "dataset/wsp-005/images/train/dog_05.jpg",
+    "label": 1,
+    "split": "train",
+    "sha256": "93722afd0794297b10900402052123c8e8aad1421bd9bae8e81ca455edf6e53e",
+    "w": 314,
+    "h": 352
+  },
+  {
+    "path": "dataset/wsp-005/images/train/dog_10.jpg",
+    "label": 1,
+    "split": "train",
+    "sha256": "06bc8172304a22d07ed6ad6132540f60f36393b0359fd17039345cbe5d180ebb",
+    "w": 500,
+    "h": 398
+  },
+  {
+    "path": "dataset/wsp-005/images/train/dog_07.jpg",
+    "label": 1,
+    "split": "train",
+    "sha256": "c8f25d72ed5cbacc6510e220f7b164e7f1392fd7bfb7da8417732845e5d3fc36",
+    "w": 336,
+    "h": 432
+  },
+  {
+    "path": "dataset/wsp-005/images/train/dog_06.jpg",
+    "label": 1,
+    "split": "train",
+    "sha256": "b8d3506a44005b3993c3291f5a405529d20a9cb61d46e744d41964262d78920c",
+    "w": 500,
+    "h": 463
+  },
+  {
+    "path": "dataset/wsp-005/images/train/dog_08.jpg",
+    "label": 1,
+    "split": "train",
+    "sha256": "c7ea728641e4622e145021498ee7fe109e68dd04d6434e3ae25320d7440acb5c",
+    "w": 400,
+    "h": 313
+  },
+  {
+    "path": "dataset/wsp-005/images/train/dog_04.jpg",
+    "label": 1,
+    "split": "train",
+    "sha256": "81684b2392b1701fab81d69a5d6c86962ab19afec8169f27646443443b6db0fb",
+    "w": 259,
+    "h": 237
+  },
+  {
+    "path": "dataset/wsp-005/images/val/dog_09.jpg",
+    "label": 1,
+    "split": "val",
+    "sha256": "f1dd5e0f9c40ecbc988647b05b12531322ba551106ab2774ad56276b3323060d",
+    "w": 500,
+    "h": 375
+  },
+  {
+    "path": "dataset/wsp-005/images/val/dog_02.jpg",
+    "label": 1,
+    "split": "val",
+    "sha256": "912b184507187fd873614ed75f0097d566a5b3f38ce74279c629ff465b2fa319",
+    "w": 359,
+    "h": 500
+  },
+  {
+    "path": "dataset/wsp-005/sealed_test/dog_03.jpg",
+    "label": 1,
+    "split": "test",
+    "sha256": "df5fb94f9f01537808c783515adb0d59fe90217fd125735a46072581c78295f4",
+    "w": 395,
+    "h": 500
+  },
+  {
+    "path": "dataset/wsp-005/sealed_test/dog_01.jpg",
+    "label": 1,
+    "split": "test",
+    "sha256": "eec02e6a237cc46b3b38a7cc1c743880d804cf4bcea3cb6f95e0dd780883bbf5",
+    "w": 459,
+    "h": 500
+  }
+]

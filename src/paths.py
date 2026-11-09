@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 
 EXPERIMENT = os.environ.get("WSP_EXPERIMENT", "wsp-001")
-if EXPERIMENT not in ("wsp-001", "wsp-002", "wsp-003", "wsp-004"):
+if EXPERIMENT not in ("wsp-001", "wsp-002", "wsp-003", "wsp-004", "wsp-005"):
     raise ValueError(f"unknown experiment {EXPERIMENT}")
 IS_V2 = EXPERIMENT != "wsp-001"          # "v2" = large-split protocol (wsp-002, wsp-003)
 TAG = EXPERIMENT.split("-")[1]

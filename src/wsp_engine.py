@@ -20,7 +20,7 @@ from data import load_split
 from evaluator import headline, score_model
 from init_weights import program_head
 from model import CatDogNet
-from weight_programmer import (WeightProgrammer, compare_parameters, restore_checkpoint,
+from weight_programmer import (WeightProgrammer, compare_parameters, differs, restore_checkpoint,
                                save_checkpoint, state_hash, validate_parameter_changes)
 
 import paths
@@ -71,8 +71,12 @@ def log(msg: str) -> None:
 
 def setup_logging() -> None:
     EXEC_LOG.parent.mkdir(exist_ok=True)
-    logging.basicConfig(filename=EXEC_LOG, level=logging.INFO, force=True,
-                        format="%(asctime)s %(message)s")
+    fmt = "%(asctime)s %(message)s"
+    try:
+        logging.basicConfig(filename=EXEC_LOG, level=logging.INFO, force=True, format=fmt)
+    except PermissionError:
+        # Protected (read-only) experiment: log to stderr instead of crashing; nothing is written to its files.
+        logging.basicConfig(level=logging.INFO, force=True, format=fmt)
 
 
 @dataclass
@@ -239,9 +243,9 @@ def run_iteration(spec: IterationSpec) -> dict:
     ckpt = save_checkpoint(model, spec.id, {"iteration": spec.id, "head_cfg": ctx.head_cfg,
                                             "accepted": ok, "parent": state["accepted_checkpoint"]})
     DIFF_DIR.mkdir(exist_ok=True)
-    changed = {k: {"index": (prev_sd[k] != model.state_dict()[k]).nonzero(),
-                   "old": prev_sd[k][prev_sd[k] != model.state_dict()[k]],
-                   "new": model.state_dict()[k][prev_sd[k] != model.state_dict()[k]]} for k in diff}
+    changed = {k: {"index": differs(prev_sd[k], model.state_dict()[k]).nonzero(),
+                   "old": prev_sd[k][differs(prev_sd[k], model.state_dict()[k])],
+                   "new": model.state_dict()[k][differs(prev_sd[k], model.state_dict()[k])]} for k in diff}
     torch.save(changed, DIFF_DIR / f"{spec.id}.pt")
 
     entry = {**record, "status": "completed", "decision": "accepted" if ok else "rejected",

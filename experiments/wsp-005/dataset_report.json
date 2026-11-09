@@ -1,0 +1,16 @@
+{
+  "seed": 5,
+  "per_class": {
+    "train": 6,
+    "val": 2,
+    "test": 2
+  },
+  "total": 20,
+  "counts": {
+    "train": 12,
+    "val": 4,
+    "test": 4
+  },
+  "source": "experiments/pilot20",
+  "note": "same 20 images as WSP-001, new split; test sealed"
+}

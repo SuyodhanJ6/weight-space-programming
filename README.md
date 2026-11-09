@@ -12,6 +12,7 @@ fine-tuning, pretrained weights, or random search)?
 | WSP-002 | 1,000 / 600 / 2,000 | 16/32/32 | 62.2% → 61.6% | No real gain |
 | **WSP-003** | 8,000 / 3,000 / 6,000 | 16/32/32 | **60.7% → 77.1%** | Real gain, but see below |
 | **WSP-004** | 8,000 / 3,000 / 3,884 fresh | wide 48/96/96 | **78.0%** (95% CI 76.7–79.3) | WSP-003 model scores 76.7% on the same images |
+| WSP-005 | 12 / 4 / 4 (same 20 images, new split) | 16/32/32 | 3/4 → 3/4 (75%, CI 30–95%) | 19 of 19 edits rejected; replication of the original 20-image mission, no gain |
 
 *Test = a held-out split that is sealed (folder mode 000) and read exactly once per experiment.*
 
@@ -40,13 +41,13 @@ Interactive version: [`docs/wsp-end-to-end-flow.html`](docs/wsp-end-to-end-flow.
 
 - Every weight edit goes through `src/weight_programmer.py` and is logged with a hypothesis, old/new values, metrics and a decision.
 - Accept rule (WSP-002 to 004): validation accuracy up by 1 pt or more, 5-fold CV not down more than 1 pt, F1 not down more than 1 pt. Training accuracy is never used.
-- Automated audit (`src/weight_audit.py`): static AST scan, runtime checks (grad off, no optimizers), hash-exact replay of all iterations. **All four audits passed**, and four independent sub-agent reviews found no violations.
+- Automated audit (`src/weight_audit.py`): static AST scan, runtime checks (grad off, no optimizers), hash-exact replay of all iterations. **All five audits pass** (WSP-005 with one disclosed sign-of-zero logging warning), and independent sub-agent reviews of WSP-001 to 004 found no violations.
 - Earlier experiments' files are read-only and hash-protected (190 hashes verified unchanged).
 
 ## Limitations and disclosures
 
 - One dataset (Microsoft Cats vs Dogs web photos), 64×64 input, one split seed per experiment.
-- WSP-001 and WSP-002 sample sizes were too small to show improvement. The "gains" there were noise.
+- WSP-001, WSP-002 and WSP-005 sample sizes were too small to show improvement. The "gains" there were noise, and in WSP-005 the one val gain (+2 images) was rejected because cross-validation collapsed.
 - Validation data was reused across WSP-003/004, so selection bias accumulates. Only each experiment's sealed test is unbiased.
 - A few WSP-002/003 iterations were written after the test aggregate was known; they are labelled exploratory and changed no accepted checkpoint.
 - Agent model was Claude Sonnet 5.5 (the task text asked for Opus 5.5). Four approved dataset downloads were made, although the project `CLAUDE.md` says no downloads.

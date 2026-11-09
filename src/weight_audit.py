@@ -167,7 +167,7 @@ def runtime_checks(state: dict) -> dict:
 def consistency_checks(state: dict) -> dict:
     history = eng.read_json(eng.HISTORY, [])
     changes = {c["id"]: c for c in eng.read_json(eng.CHANGES, [])}
-    problems, replayed = [], []
+    problems, replayed, warnings = [], [], []
     base, _ = restore_checkpoint(state["baseline_checkpoint"])
     baseline_ok = state_hash(base.state_dict()) == state["baseline_sha256"]
     tx, ty, _ = load_split("train")
@@ -194,8 +194,16 @@ def consistency_checks(state: dict) -> dict:
             for idx, val in zip(d["index"], d["new"]):
                 sd[key][tuple(idx.tolist())] = val
         reproduced = state_hash(sd) == ckpt["sha256"]
-        replayed.append({"id": iid, "decision": entry["decision"], "reproduced_from_parent_and_diff": reproduced})
-        if not reproduced:
+        zero_only = False
+        if not reproduced:   # diffs logged before bit-exact logging omit -0.0 -> +0.0 changes (equal by value)
+            zero_only = all(bool(((sd[k] + 0.0).view(torch.int32) == (v + 0.0).view(torch.int32)).all())
+                            for k, v in cand.state_dict().items())
+        replayed.append({"id": iid, "decision": entry["decision"], "reproduced_from_parent_and_diff": reproduced,
+                         "reproduced_up_to_signed_zero_only": zero_only})
+        if not reproduced and zero_only:
+            warnings.append(f"{iid}: reproduces exactly except sign-of-zero (-0.0 vs +0.0) entries omitted from the "
+                            "logged diff (value-equal; logger made bit-exact afterwards)")
+        elif not reproduced:
             problems.append(f"{iid}: not reproducible from parent + recorded diff")
         if sum(v["changed"] for v in entry["parameter_diff"].values()) != entry["n_changed_parameters"]:
             problems.append(f"{iid}: changed-count mismatch")
@@ -203,7 +211,7 @@ def consistency_checks(state: dict) -> dict:
     return {"baseline_hash_ok": baseline_ok, "baseline_rebuilt_from_code_matches": rebuild_ok,
             "accepted_hash_ok": state_hash(acc.state_dict()) == state["accepted_sha256"],
             "baseline_file_read_only": not (Path(state["baseline_checkpoint"]).stat().st_mode & 0o222),
-            "iterations_audited": len(replayed), "replays": replayed,
+            "iterations_audited": len(replayed), "replays": replayed, "warnings": warnings,
             "rejected_preserved": all((paths.CHECKPOINT_DIR / f"{i}.pt").exists() for i in state["rejected_ids"]),
             "no_test_metrics_in_iteration_history": not any("test" in json.dumps(e.get("new_metrics", {}))
                                                             for e in history),
