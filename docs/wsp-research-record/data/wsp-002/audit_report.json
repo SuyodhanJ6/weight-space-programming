@@ -1,0 +1,1482 @@
+{
+  "experiment": "wsp-002",
+  "static_findings": [],
+  "mutation_findings": [],
+  "runtime": {
+    "grad_mode_disabled": true,
+    "optimizer_instances_alive": 0,
+    "params_require_grad": [],
+    "activations_with_graph": [],
+    "splits_read_by_score_model": [
+      "train",
+      "val"
+    ]
+  },
+  "consistency": {
+    "baseline_hash_ok": true,
+    "baseline_rebuilt_from_code_matches": true,
+    "accepted_hash_ok": true,
+    "baseline_file_read_only": true,
+    "iterations_audited": 27,
+    "replays": [
+      {
+        "id": "iter001",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter002",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter003",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter004",
+        "decision": "accepted",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter005",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter006",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter007",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter008",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter009",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter010",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter011",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter012",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter013",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter014",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter015",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter016",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter017",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter018",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter019",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter020",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter021",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter022",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter023",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter024",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter025",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter026",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      },
+      {
+        "id": "iter027",
+        "decision": "rejected",
+        "reproduced_from_parent_and_diff": true
+      }
+    ],
+    "rejected_preserved": true,
+    "no_test_metrics_in_iteration_history": true,
+    "problems": []
+  },
+  "weight_updates": {
+    "iterations_replayed": 27,
+    "problems": [],
+    "trail": [
+      {
+        "id": "iter001",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter000_initial.pt",
+        "operations": [
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "c94288009a7eef01072aec3ff518212899106ac30ad6f4693fee28be4bee3494",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter002",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter000_initial.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv2.bias",
+            "(slice(None, None, None),)",
+            32
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv2.bias": 32,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "21beb5007c7907dba0b0fb2321f5b6150dfacf39a81f76ba738547056abea4a1",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter003",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter000_initial.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv3.bias",
+            "(slice(None, None, None),)",
+            32
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv3.bias": 32,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "20c44a624ea398e5b557f1fe12291f7133f18e5c8117da25cf5a9dc73902e11b",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter004",
+        "decision": "accepted",
+        "parent": "checkpoints/wsp-002/iter000_initial.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(24, 12, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(25, 13, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(26, 14, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(27, 15, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(28, 12, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(29, 13, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(30, 14, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(31, 15, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv2.weight": 72,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "4a780ca276616edfb41b812373c10fd925690d6b6a8c8b5b16282e74b3ce4318",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter005",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "0a0133a3b6b27ea6120b9ecbc3e3c813598f58ca57eba176cfd21ae25de2bcf7",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter006",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(24, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(25, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(26, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(27, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(28, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(29, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(30, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(31, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv3.weight": 576,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "355cdcd037352089ab6658785d8c563fc5b2dc2aa295b60ee7e75f320f8fbd6a",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter007",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "apply_parameter_transform",
+            "conv2.weight",
+            "x3 @ (slice(24, 32, None), slice(12, 16, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv2.weight": 72,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "447fb0a256009fc4c8f5d8f9eea27be1baefd7ff5db83e0d989bc5354c4476a5",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter008",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(8, 12, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(9, 13, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(10, 14, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(11, 15, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(12, 12, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(13, 13, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(14, 14, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(15, 15, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv2.weight": 72,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "c4fd20df980634b83728a30732caf5e9bc03ae5a1ee107b344f820f8f7e41ce9",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter009",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(0, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(1, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(2, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(3, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(4, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(5, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(6, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(7, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv1.weight": 600,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "6d38ba1c350ac91d51c2cf40abdfee45d993217eedbdea90a31de882de9de843",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter010",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "7b0e75b639b7d611e2d46007d0fe1727d850dfd51b3bd9e3df8bb42746110336",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter011",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "747b4655a6357b1d625705e74710abbf4e882f0263c46f1d490f8315c0e8196c",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter012",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(tensor([18,  4, 17, 19,  5,  6,  2,  8]),)",
+            216
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv3.weight": 216,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "64fd81e56935e796e9ab8e4ef561c480c43b8187025c32db2adb023486451b23",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter013",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(12, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            50
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(13, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            50
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(14, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(15, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv1.weight": 250,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "79b582deb518c716599018c2848cfb7a91f111eb758c66541c73bf50053a108a",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter014",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(16, 12, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(17, 13, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(18, 14, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(19, 15, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(20, 12, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(21, 13, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(22, 14, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(23, 15, slice(None, None, None), slice(None, None, None))",
+            9
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv2.weight": 72,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "e7645d1770703f2b83c9566ec1c2022a7dd1b7f6a1f69ce4db5a8ab1ac11aac3",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter015",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv2.bias",
+            "(slice(None, None, None),)",
+            32
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv2.bias": 32,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "bed2f9ff2b108ec05b9e484cfe5fb7a02382a6013d2478a6f8857e7a35c5d6d3",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter016",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv2.weight",
+            "(slice(24, 32, None), slice(0, 8, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv2.weight": 72,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "d793256effc4657d2fb62ee36fd4283df3afd7d34b52d03f65304a0ddd67f32a",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter017",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(25, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(26, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(27, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(28, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv3.weight": 288,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "481a40d4538c9a414d10655a089fd0c0a80e5c1662d2faf1fe13a10bebdda946",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter018",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(29, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(30, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "modify_parameter_group",
+            "conv3.weight",
+            "(31, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            72
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv3.weight": 216,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "0c7fbc584c07b0647cda531589ee931f1ed92f83ffa1481797b770973ddc0114",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter019",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(10, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(11, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv1.weight": 150,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "a39424c2cb5c2a12f634c05f368a1ccd27f14681845e65faff183c3e9045d1aa",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter020",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(0, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(1, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(2, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(3, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(4, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(5, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(6, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(7, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv1.weight": 600,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "eeef694ee03e41137cc10781230da9837df6f95f69bd02203e8c4b491df87a29",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter021",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[0, 1, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[0, 7, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[1, 2, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[1, 0, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[2, 3, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[2, 1, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[3, 4, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[3, 2, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[4, 5, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[4, 3, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[5, 6, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[5, 4, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[6, 7, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[6, 5, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[7, 0, 1, 1]",
+            1
+          ],
+          [
+            "modify_parameter",
+            "conv2.weight",
+            "[7, 6, 1, 1]",
+            1
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv2.weight": 16,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "fb9ae1071f8a6f189b344842ffd7c3ff1a5107747736ac4675510df612c51463",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter022",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv3.bias",
+            "(slice(None, None, None),)",
+            32
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv3.bias": 32,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "8fec3dfe12351ab886b7a636e189129080c642c37883b7c9e4197c2dac17140a",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter023",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "replace_parameter",
+            "conv2.weight",
+            "all",
+            368
+          ],
+          [
+            "replace_parameter",
+            "conv3.weight",
+            "all",
+            1224
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv2.weight": 368,
+          "conv3.weight": 1224,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "59f8c5c332c3f05dc3efb785f85c62ada41b37b3cc5adc5486e659229a86d2da",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter024",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "replace_parameter",
+            "conv2.weight",
+            "all",
+            412
+          ],
+          [
+            "replace_parameter",
+            "conv3.weight",
+            "all",
+            1296
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv2.weight": 412,
+          "conv3.weight": 1296,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "f7d1fb1e8a0b23baac1b9cabc99f2b894e3193194a87b965cad69dd92be742df",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter025",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "d8e98b9a82f34ef76612dba2776791f8c400039323e84546d87f94bee6821eac",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter026",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "9f948bf1564253821b3bb9316fd43b053a00f0783b3128878fcb01753d54436b",
+        "replay_matches": true,
+        "all_changes_logged": true
+      },
+      {
+        "id": "iter027",
+        "decision": "rejected",
+        "parent": "checkpoints/wsp-002/iter004.pt",
+        "operations": [
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(8, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter",
+            "conv1.bias",
+            "[8]",
+            1
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(9, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter",
+            "conv1.bias",
+            "[9]",
+            1
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(10, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter",
+            "conv1.bias",
+            "[10]",
+            1
+          ],
+          [
+            "modify_parameter_group",
+            "conv1.weight",
+            "(11, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+            75
+          ],
+          [
+            "modify_parameter",
+            "conv1.bias",
+            "[11]",
+            1
+          ],
+          [
+            "replace_parameter",
+            "head.weight",
+            "all",
+            512
+          ],
+          [
+            "replace_parameter",
+            "head.bias",
+            "all",
+            1
+          ]
+        ],
+        "changed_per_tensor": {
+          "conv1.weight": 300,
+          "conv1.bias": 4,
+          "head.weight": 512,
+          "head.bias": 1
+        },
+        "candidate_sha256": "fff55583d20d11e45934074c16194d5cb3b0a1b9e940ada9d54a3f71f8180e82",
+        "replay_matches": true,
+        "all_changes_logged": true
+      }
+    ]
+  },
+  "wsp002": {
+    "test_sealed_mode": "0o0",
+    "test_cache_absent_before_final": true,
+    "train_val_images_unchanged": true,
+    "test_split_counts": {
+      "train": 1000,
+      "val": 600,
+      "test": 2000
+    },
+    "wsp001_artifacts_changed": []
+  },
+  "passed": true
+}

@@ -1,0 +1,5235 @@
+[
+  {
+    "id": "iter000",
+    "title": "hand-programmed baseline",
+    "decision": "baseline",
+    "metrics": {
+      "train_acc": 0.622,
+      "val_acc": 0.5717,
+      "val_f1": 0.5403,
+      "val_margin": 0.398,
+      "cv_acc": 0.618,
+      "cv_margin": 0.5081
+    },
+    "checkpoint": "checkpoints/wsp-002/iter000_initial.pt"
+  },
+  {
+    "id": "iter001",
+    "title": "Remove global-energy direction from the head (replication at scale)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter000_initial.pt",
+    "observed": "On train (n=1000) the baseline logit correlates r=+0.91 with image edge density but the label only +0.25; corr(logit,label)=0.26. Head weights are almost all positive.",
+    "problem": "The classifier is an edge-density meter, not a cat/dog detector.",
+    "hypothesis": "Subtracting the mean head weight removes the energy-following direction, so the logit depends on which features differ between classes. (Rejected on 4 val images in WSP-001; re-tested because 600 val images can now resolve a 1-point effect.)",
+    "selected": "head.weight (512), head.bias (1) [closed-form head]",
+    "expected": "Lower correlation of logit with edge density; val accuracy up if energy was a distractor.",
+    "risks": "May remove legitimate dog-leaning energy (dogs have slightly more edges: r=+0.25).",
+    "started": "19:18:24",
+    "decision": "rejected",
+    "decision_reason": "diagnostic regression (cv -0.0320, val_f1 +0.0216)",
+    "previous_metrics": {
+      "train_acc": 0.622,
+      "val_acc": 0.5717,
+      "val_f1": 0.5403,
+      "val_margin": 0.398,
+      "cv_acc": 0.618,
+      "cv_margin": 0.5081
+    },
+    "new_metrics": {
+      "train_acc": 0.593,
+      "val_acc": 0.5633,
+      "val_f1": 0.5619,
+      "val_margin": 0.3687,
+      "cv_acc": 0.586,
+      "cv_margin": 0.3878
+    },
+    "head_cfg": {
+      "rule": "lda_demean",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 1.0158241987228394,
+        "l2_delta": 7.719393253326416
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 5.784453392028809,
+        "l2_delta": 5.784453392028809
+      }
+    },
+    "operations": [
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "remove global-energy direction from head [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.125178,
+          0.135521,
+          0.129147,
+          0.132857,
+          0.144156,
+          0.150535,
+          0.170188,
+          0.165088
+        ],
+        "sample_new": [
+          -0.090015,
+          -0.021176,
+          -0.063598,
+          -0.038903,
+          0.036301,
+          0.078763,
+          0.209576,
+          0.175629
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "remove global-energy direction from head [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -6.756005
+        ],
+        "sample_new": [
+          -0.971551
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter001.pt",
+      "sha256": "c94288009a7eef01072aec3ff518212899106ac30ad6f4693fee28be4bee3494"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter001.pt",
+    "notes": [],
+    "n_changed_parameters": 513,
+    "prev_n_wrong_val": 257,
+    "new_n_wrong_val": 262,
+    "new_n_wrong_cv": 414
+  },
+  {
+    "id": "iter002",
+    "title": "Centre conv2 pre-activations with negative biases (replication)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter000_initial.pt",
+    "observed": "relu2 is 95% active and relu3 100%: ReLUs do not gate, so the network is nearly linear.",
+    "problem": "No nonlinear feature selection occurs.",
+    "hypothesis": "conv2.bias_c = -mean(pre-activation_c over train) makes units fire only for above-average local evidence. (Accepted in WSP-001 on 16 images; re-tested at scale.)",
+    "selected": "conv2.bias (32) + head refit (513) [bias is a data-derived constant; head closed-form]",
+    "expected": "Sparser conv2 activations and more selective features.",
+    "risks": "Mean centring uses train statistics; can zero out weak channels.",
+    "started": "19:18:25",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val +0.0066, cv -0.0050, val_f1 -0.0045)",
+    "previous_metrics": {
+      "train_acc": 0.622,
+      "val_acc": 0.5717,
+      "val_f1": 0.5403,
+      "val_margin": 0.398,
+      "cv_acc": 0.618,
+      "cv_margin": 0.5081
+    },
+    "new_metrics": {
+      "train_acc": 0.613,
+      "val_acc": 0.5783,
+      "val_f1": 0.5358,
+      "val_margin": 0.3726,
+      "cv_acc": 0.613,
+      "cv_margin": 0.4708
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv2.bias": {
+        "changed": 32,
+        "total": 32,
+        "max_abs_delta": 0.07638222724199295,
+        "l2_delta": 0.3449593186378479
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.07341760396957397,
+        "l2_delta": 0.717475414276123
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 2.6449718475341797,
+        "l2_delta": 2.6449718475341797
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.bias",
+        "selector": "(slice(None, None, None),)",
+        "reason": "bias_c = -mean(pre-activation_c over train images): centre pre-activations so ReLU gates",
+        "n_changed": 32,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          -0.073199,
+          -0.064398,
+          -0.059435,
+          -0.063061,
+          -0.071073,
+          -0.063018,
+          -0.059343,
+          -0.064339
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.125178,
+          0.135521,
+          0.129147,
+          0.132857,
+          0.144156,
+          0.150535,
+          0.170188,
+          0.165088
+        ],
+        "sample_new": [
+          0.138677,
+          0.146193,
+          0.141942,
+          0.154458,
+          0.181501,
+          0.183585,
+          0.211266,
+          0.219943
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -6.756005
+        ],
+        "sample_new": [
+          -4.111033
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter002.pt",
+      "sha256": "21beb5007c7907dba0b0fb2321f5b6150dfacf39a81f76ba738547056abea4a1"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter002.pt",
+    "notes": [],
+    "n_changed_parameters": 545,
+    "prev_n_wrong_val": 257,
+    "new_n_wrong_val": 253,
+    "new_n_wrong_cv": 387
+  },
+  {
+    "id": "iter003",
+    "title": "Centre conv3 pre-activations with negative biases (replication)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter000_initial.pt",
+    "observed": "relu3 is 100% active; every final feature contributes.",
+    "problem": "Same linearity one layer deeper.",
+    "hypothesis": "Centring conv3 pre-activations gates the final features. (Rejected in WSP-001 on 16 images.)",
+    "selected": "conv3.bias (32) + head refit (513)",
+    "expected": "More selective final descriptors.",
+    "risks": "Over-sparsification of final features.",
+    "started": "19:18:27",
+    "decision": "rejected",
+    "decision_reason": "diagnostic regression (cv -0.0240, val_f1 -0.0187)",
+    "previous_metrics": {
+      "train_acc": 0.622,
+      "val_acc": 0.5717,
+      "val_f1": 0.5403,
+      "val_margin": 0.398,
+      "cv_acc": 0.618,
+      "cv_margin": 0.5081
+    },
+    "new_metrics": {
+      "train_acc": 0.594,
+      "val_acc": 0.575,
+      "val_f1": 0.5216,
+      "val_margin": 0.3504,
+      "cv_acc": 0.594,
+      "cv_margin": 0.4193
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv3.bias": {
+        "changed": 32,
+        "total": 32,
+        "max_abs_delta": 0.11782417446374893,
+        "l2_delta": 0.5326574444770813
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.18309205770492554,
+        "l2_delta": 1.7497687339782715
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 4.216585159301758,
+        "l2_delta": 4.216585159301758
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.bias",
+        "selector": "(slice(None, None, None),)",
+        "reason": "bias_c = -mean(pre-activation_c over train images): centre pre-activations so ReLU gates",
+        "n_changed": 32,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          -0.100292,
+          -0.086662,
+          -0.08458,
+          -0.08661,
+          -0.097829,
+          -0.085067,
+          -0.084408,
+          -0.088077
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.125178,
+          0.135521,
+          0.129147,
+          0.132857,
+          0.144156,
+          0.150535,
+          0.170188,
+          0.165088
+        ],
+        "sample_new": [
+          0.170543,
+          0.170097,
+          0.175332,
+          0.191374,
+          0.241436,
+          0.234138,
+          0.283071,
+          0.295906
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -6.756005
+        ],
+        "sample_new": [
+          -2.539419
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter003.pt",
+      "sha256": "20c44a624ea398e5b557f1fe12291f7133f18e5c8117da25cf5a9dc73902e11b"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter003.pt",
+    "notes": [],
+    "n_changed_parameters": 545,
+    "prev_n_wrong_val": 257,
+    "new_n_wrong_val": 255,
+    "new_n_wrong_cv": 406
+  },
+  {
+    "id": "iter004",
+    "title": "Wire the dead colour pathway into conv2 (replication)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter000_initial.pt",
+    "observed": "conv2 receives exactly 0.0 weight from the 4 colour channels. On this larger train set warmth barely relates to label (r=+0.08), unlike the 20-image WSP-001 sample.",
+    "problem": "Colour is discarded; but its value is doubtful at scale.",
+    "hypothesis": "Connecting colour channels to conv2 filters 24-31 will NOT help (WSP-001's val gain was one image). This is a falsification test of the WSP-001 colour finding.",
+    "selected": "conv2.weight[24:32,12:16] (72) + head refit (513)",
+    "expected": "No val improvement >=1 point; if one appears the WSP-001 finding replicates.",
+    "risks": "Spurious colour correlation on 600 val images is unlikely but possible.",
+    "started": "19:18:28",
+    "decision": "accepted",
+    "decision_reason": "val improvement (val +0.0350, cv +0.0140, val_f1 +0.0486)",
+    "previous_metrics": {
+      "train_acc": 0.622,
+      "val_acc": 0.5717,
+      "val_f1": 0.5403,
+      "val_margin": 0.398,
+      "cv_acc": 0.618,
+      "cv_margin": 0.5081
+    },
+    "new_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv2.weight": {
+        "changed": 72,
+        "total": 4608,
+        "max_abs_delta": 0.1111111119389534,
+        "l2_delta": 0.942808985710144
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.10410602390766144,
+        "l2_delta": 0.8708665370941162
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.6332664489746094,
+        "l2_delta": 0.6332664489746094
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(24, 12, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 12 into conv2 blob+edge filter 24",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(25, 13, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 13 into conv2 blob+edge filter 25",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(26, 14, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 14 into conv2 blob+edge filter 26",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(27, 15, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 15 into conv2 blob+edge filter 27",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(28, 12, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 12 into conv2 blob+edge filter 28",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(29, 13, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 13 into conv2 blob+edge filter 29",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(30, 14, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 14 into conv2 blob+edge filter 30",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(31, 15, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 15 into conv2 blob+edge filter 31",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.125178,
+          0.135521,
+          0.129147,
+          0.132857,
+          0.144156,
+          0.150535,
+          0.170188,
+          0.165088
+        ],
+        "sample_new": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -6.756005
+        ],
+        "sample_new": [
+          -7.389271
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter004.pt",
+      "sha256": "4a780ca276616edfb41b812373c10fd925690d6b6a8c8b5b16282e74b3ce4318"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter004.pt",
+    "notes": [],
+    "n_changed_parameters": 585,
+    "prev_n_wrong_val": 257,
+    "new_n_wrong_val": 236,
+    "new_n_wrong_cv": 368
+  },
+  {
+    "id": "iter005",
+    "title": "Suppress the bottom pooled row in the head",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "Per-cell mean |effect size| on train: 0.43/0.42 for centre cells vs 0.10-0.20 for the bottom row (ground/floor/furniture), 0.22-0.37 elsewhere.",
+    "problem": "Bottom-row features carry little class signal but add variance (and background).",
+    "hypothesis": "Scaling bottom-row head weights by 0.25 reduces background noise.",
+    "selected": "head.weight bottom-row entries (128 of 512), head.bias [closed-form head with mask]",
+    "expected": "Small val gain; risk of losing legs/paw cues.",
+    "risks": "Animals whose lower body is informative.",
+    "started": "19:18:29",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val -0.0067, cv +0.0010, val_f1 -0.0027)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.636,
+      "val_acc": 0.6,
+      "val_f1": 0.5862,
+      "val_margin": 0.4039,
+      "cv_acc": 0.633,
+      "cv_margin": 0.6116
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    "parameter_diff": {
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.13205085694789886,
+        "l2_delta": 0.669747531414032
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.07831048965454102,
+        "l2_delta": 0.07831048965454102
+      }
+    },
+    "operations": [
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "down-weight bottom pooled row (floor/ground) to 0.25 [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.069345,
+          0.104209,
+          0.10301,
+          0.096511,
+          0.118183,
+          0.164108,
+          0.176465,
+          0.130722
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "down-weight bottom pooled row (floor/ground) to 0.25 [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.310961
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter005.pt",
+      "sha256": "0a0133a3b6b27ea6120b9ecbc3e3c813598f58ca57eba176cfd21ae25de2bcf7"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter005.pt",
+    "notes": [],
+    "n_changed_parameters": 513,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 240,
+    "new_n_wrong_cv": 367
+  },
+  {
+    "id": "iter006",
+    "title": "Identity routing for conv3 filters 24-31 (de-duplicate colour/blob features)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "After iter004, conv3 filters 24-31 each sum ALL eight conv2 blob/colour channels with the same kernel, so they are identical: colour evidence reaches the head as one feature repeated 8x (16 distinct values of 512).",
+    "problem": "Colour/blob information is collapsed; the head cannot weight individual colour channels.",
+    "hypothesis": "Routing conv3 filter 24+j to conv2 channel 24+j only gives eight distinct colour/blob descriptors, so the closed-form head can use them separately and val accuracy rises.",
+    "selected": "conv3.weight[24:32] (8x32x3x3 = 2304 values) + head refit (513)",
+    "expected": "Val accuracy gain >=1 point if colour descriptors are individually informative.",
+    "risks": "Position-specific loss of the pooled colour sum; more head variance (more distinct features).",
+    "started": "19:18:56",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val -0.0017, cv +0.0000, val_f1 -0.0025)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.631,
+      "val_acc": 0.605,
+      "val_f1": 0.5864,
+      "val_margin": 0.4315,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5995
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv3.weight": {
+        "changed": 576,
+        "total": 9216,
+        "max_abs_delta": 0.21875,
+        "l2_delta": 0.9921567440032959
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.08263123780488968,
+        "l2_delta": 0.8151676058769226
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.06497621536254883,
+        "l2_delta": 0.06497621536254883
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(24, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 24 reads ONLY conv2 channel 24 (identity routing)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.0625,
+          0.125,
+          0.0625,
+          0.125,
+          0.25,
+          0.125,
+          0.0625,
+          0.125
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(25, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 25 reads ONLY conv2 channel 25 (identity routing)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(26, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 26 reads ONLY conv2 channel 26 (identity routing)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(27, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 27 reads ONLY conv2 channel 27 (identity routing)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(28, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 28 reads ONLY conv2 channel 28 (identity routing)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(29, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 29 reads ONLY conv2 channel 29 (identity routing)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(30, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 30 reads ONLY conv2 channel 30 (identity routing)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(31, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 31 reads ONLY conv2 channel 31 (identity routing)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.079334,
+          0.119221,
+          0.11785,
+          0.110414,
+          0.135208,
+          0.187748,
+          0.201886,
+          0.149554
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.454247
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter006.pt",
+      "sha256": "355cdcd037352089ab6658785d8c563fc5b2dc2aa295b60ee7e75f320f8fbd6a"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter006.pt",
+    "notes": [],
+    "n_changed_parameters": 1089,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 237,
+    "new_n_wrong_cv": 368
+  },
+  {
+    "id": "iter007",
+    "title": "Amplify colour pathway x3 (replication of WSP-001 iter007)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "iter004 (colour) was the only accepted edit; colour weights are 1/9 per tap vs edge weights up to 0.5.",
+    "problem": "Colour evidence may be under-weighted relative to edge channels inside conv2.",
+    "hypothesis": "Scaling the 72 wired colour weights by 3 strengthens colour influence and raises val accuracy.",
+    "selected": "conv2.weight[24:32,12:16] (72) + head refit (513)",
+    "expected": "Further gain if colour is genuinely informative; regression if it adds noise.",
+    "risks": "Overweights a noisy cue.",
+    "started": "19:18:57",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val -0.0067, cv +0.0010, val_f1 -0.0100)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.637,
+      "val_acc": 0.6,
+      "val_f1": 0.5789,
+      "val_margin": 0.3829,
+      "cv_acc": 0.633,
+      "cv_margin": 0.5889
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv2.weight": {
+        "changed": 72,
+        "total": 4608,
+        "max_abs_delta": 0.222222238779068,
+        "l2_delta": 1.8856180906295776
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.12270951271057129,
+        "l2_delta": 0.9950940012931824
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.3014979362487793,
+        "l2_delta": 0.3014979362487793
+      }
+    },
+    "operations": [
+      {
+        "op": "apply_parameter_transform",
+        "parameter": "conv2.weight",
+        "selector": "x3 @ (slice(24, 32, None), slice(12, 16, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "scale colour-pathway weights (wired in iter004) by 3 so colour evidence is not swamped by edge channels",
+        "n_changed": 72,
+        "sample_old": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ],
+        "sample_new": [
+          0.333333,
+          0.333333,
+          0.333333,
+          0.333333,
+          0.333333,
+          0.333333,
+          0.333333,
+          0.333333
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.016193,
+          0.034434,
+          0.037211,
+          0.031169,
+          0.04286,
+          0.07298,
+          0.075901,
+          0.044697
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.087773
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter007.pt",
+      "sha256": "447fb0a256009fc4c8f5d8f9eea27be1baefd7ff5db83e0d989bc5354c4476a5"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter007.pt",
+    "notes": [],
+    "n_changed_parameters": 585,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 240,
+    "new_n_wrong_cv": 367
+  },
+  {
+    "id": "iter008",
+    "title": "Wire colour into conv2 corner filters 8-15",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "Colour reaches conv3 only through the blob+edge path (filters 24-31).",
+    "problem": "Colour is not combined with the corner/junction detectors.",
+    "hypothesis": "Adding colour-opponent input to the corner filters lets the network represent coloured corner/junction regions (e.g. nose, eyes against fur).",
+    "selected": "conv2.weight[8:16,12:16] (72) + head refit (513)",
+    "expected": "Val gain >=1 point if colour-structure conjunctions matter.",
+    "risks": "Dilutes pure corner geometry.",
+    "started": "19:18:59",
+    "decision": "rejected",
+    "decision_reason": "diagnostic regression (cv -0.0080, val_f1 -0.0288)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.628,
+      "val_acc": 0.5917,
+      "val_f1": 0.5601,
+      "val_margin": 0.3527,
+      "cv_acc": 0.624,
+      "cv_margin": 0.5682
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv2.weight": {
+        "changed": 72,
+        "total": 4608,
+        "max_abs_delta": 0.1111111119389534,
+        "l2_delta": 0.942808985710144
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.17015564441680908,
+        "l2_delta": 1.097957730293274
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.5838885307312012,
+        "l2_delta": 0.5838885307312012
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(8, 12, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 12 into conv2 corner filter 8",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(9, 13, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 13 into conv2 corner filter 9",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(10, 14, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 14 into conv2 corner filter 10",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(11, 15, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 15 into conv2 corner filter 11",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(12, 12, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 12 into conv2 corner filter 12",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(13, 13, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 13 into conv2 corner filter 13",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(14, 14, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 14 into conv2 corner filter 14",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(15, 15, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 15 into conv2 corner filter 15",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.026042,
+          0.047285,
+          0.050274,
+          0.043806,
+          0.057796,
+          0.091431,
+          0.096447,
+          0.061722
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -6.805383
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter008.pt",
+      "sha256": "c4fd20df980634b83728a30732caf5e9bc03ae5a1ee107b344f820f8f7e41ce9"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter008.pt",
+    "notes": [],
+    "n_changed_parameters": 585,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 245,
+    "new_n_wrong_cv": 376
+  },
+  {
+    "id": "iter009",
+    "title": "Coarser oriented edge filters in conv1 (wavelength 4 -> 6 px)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "The accepted model's logit still follows fine-scale edge density (baseline r=+0.91 with mean |dI/dx|, only +0.25 with the label). Fine 4-px Gabors mostly measure texture/JPEG detail.",
+    "problem": "Fine-scale edge energy is a weak, confounded cue; class-relevant structure (ear, eye, muzzle contours) lives at coarser scales (~6-8 px at 64x64).",
+    "hypothesis": "Replacing the 8 oriented filters with wavelength-6 px, sigma-2.0 Gabors lowers dependence on fine texture and raises val accuracy by >=1 point.",
+    "selected": "conv1.weight[0:8] (8x3x5x5 = 600 values) + head refit (513)",
+    "expected": "Lower correlation with fine edge density, modest val gain.",
+    "risks": "Loses fine whisker/fur detail; 5x5 support truncates a 6-px wavelength.",
+    "started": "19:19:54",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val -0.0084, cv -0.0010, val_f1 -0.0037)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.635,
+      "val_acc": 0.5983,
+      "val_f1": 0.5852,
+      "val_margin": 0.3733,
+      "cv_acc": 0.631,
+      "cv_margin": 0.5916
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv1.weight": {
+        "changed": 600,
+        "total": 1200,
+        "max_abs_delta": 0.0340774804353714,
+        "l2_delta": 0.20835772156715393
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.027663007378578186,
+        "l2_delta": 0.18684372305870056
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.1103363037109375,
+        "l2_delta": 0.1103363037109375
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(0, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 0: Gabor wavelength 4->6 px, sigma 1.5->2.0 (coarser structure)",
+        "n_changed": 75,
+        "sample_old": [
+          -0.008755,
+          -0.001102,
+          0.017511,
+          -0.001102,
+          -0.008755,
+          -0.016007,
+          -0.001102,
+          0.035152
+        ],
+        "sample_new": [
+          -0.013021,
+          0.002173,
+          0.013577,
+          0.002173,
+          -0.013021,
+          -0.015837,
+          0.006271,
+          0.022862
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(1, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 1: Gabor wavelength 4->6 px, sigma 1.5->2.0 (coarser structure)",
+        "n_changed": 75,
+        "sample_old": [
+          -0.005355,
+          -0.012915,
+          0.004167,
+          0.010821,
+          -0.002447,
+          -0.013582,
+          -0.013157,
+          0.024107
+        ],
+        "sample_new": [
+          -0.018696,
+          -0.010869,
+          0.006867,
+          0.010431,
+          -0.002084,
+          -0.019791,
+          -0.002054,
+          0.020006
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(2, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 2: Gabor wavelength 4->6 px, sigma 1.5->2.0 (coarser structure)",
+        "n_changed": 75,
+        "sample_old": [
+          -0.00402,
+          -0.014791,
+          -0.011918,
+          0.00338,
+          0.004264,
+          -0.014791,
+          -0.017312,
+          0.011485
+        ],
+        "sample_new": [
+          -0.019953,
+          -0.018686,
+          -0.005981,
+          0.005452,
+          0.004538,
+          -0.018686,
+          -0.005462,
+          0.014053
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(3, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 3: Gabor wavelength 4->6 px, sigma 1.5->2.0 (coarser structure)",
+        "n_changed": 75,
+        "sample_old": [
+          -0.005355,
+          -0.013582,
+          -0.017145,
+          -0.010148,
+          -0.002447,
+          -0.012915,
+          -0.013157,
+          0.00212
+        ],
+        "sample_new": [
+          -0.018696,
+          -0.019791,
+          -0.01459,
+          -0.006666,
+          -0.002084,
+          -0.010869,
+          -0.002054,
+          0.009516
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(4, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 4: Gabor wavelength 4->6 px, sigma 1.5->2.0 (coarser structure)",
+        "n_changed": 75,
+        "sample_old": [
+          -0.008755,
+          -0.016007,
+          -0.019716,
+          -0.016007,
+          -0.008755,
+          -0.001102,
+          -0.001102,
+          -0.001102
+        ],
+        "sample_new": [
+          -0.013021,
+          -0.015837,
+          -0.017036,
+          -0.015837,
+          -0.013021,
+          0.002173,
+          0.006271,
+          0.008015
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(5, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 5: Gabor wavelength 4->6 px, sigma 1.5->2.0 (coarser structure)",
+        "n_changed": 75,
+        "sample_old": [
+          -0.002447,
+          -0.010148,
+          -0.017145,
+          -0.013582,
+          -0.005355,
+          0.010821,
+          0.014872,
+          0.00212
+        ],
+        "sample_new": [
+          -0.002084,
+          -0.006666,
+          -0.01459,
+          -0.019791,
+          -0.018696,
+          0.010431,
+          0.014775,
+          0.009516
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(6, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 6: Gabor wavelength 4->6 px, sigma 1.5->2.0 (coarser structure)",
+        "n_changed": 75,
+        "sample_old": [
+          0.004264,
+          0.00338,
+          -0.011918,
+          -0.014791,
+          -0.00402,
+          0.00338,
+          0.022542,
+          0.011485
+        ],
+        "sample_new": [
+          0.004538,
+          0.005452,
+          -0.005981,
+          -0.018686,
+          -0.019953,
+          0.005452,
+          0.018328,
+          0.014053
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(7, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 7: Gabor wavelength 4->6 px, sigma 1.5->2.0 (coarser structure)",
+        "n_changed": 75,
+        "sample_old": [
+          -0.002447,
+          0.010821,
+          0.004167,
+          -0.012915,
+          -0.005355,
+          -0.010148,
+          0.014872,
+          0.024107
+        ],
+        "sample_new": [
+          -0.002084,
+          0.010431,
+          0.006867,
+          -0.010869,
+          -0.018696,
+          -0.006666,
+          0.014775,
+          0.020006
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.06019,
+          0.09467,
+          0.093535,
+          0.085864,
+          0.108918,
+          0.154256,
+          0.165644,
+          0.117546
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.499608
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter009.pt",
+      "sha256": "6d38ba1c350ac91d51c2cf40abdfee45d993217eedbdea90a31de882de9de843"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter009.pt",
+    "notes": [],
+    "n_changed_parameters": 1113,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 241,
+    "new_n_wrong_cv": 369
+  },
+  {
+    "id": "iter010",
+    "title": "Centroid head rule (no per-feature variance scaling)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "Head has 512 features fitted from 1000 train images; centre-only edge features (96) match the full head on val (59.5 vs 60.7%), so many features add noise.",
+    "problem": "Dividing by noisy per-feature variances amplifies low-variance, uninformative features.",
+    "hypothesis": "The plain class-mean difference (centroid rule) is more robust and raises val accuracy by >=1 point. (Rejected in WSP-001 on 16 images.)",
+    "selected": "head.weight (512), head.bias (1) [closed-form head]",
+    "expected": "Higher val accuracy and CV accuracy if variance estimates were the noise source.",
+    "risks": "Ignores feature scale; may favour high-variance features.",
+    "started": "19:19:56",
+    "decision": "rejected",
+    "decision_reason": "diagnostic regression (cv -0.0200, val_f1 -0.0349)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.61,
+      "val_acc": 0.5867,
+      "val_f1": 0.554,
+      "val_margin": 0.2861,
+      "cv_acc": 0.612,
+      "cv_margin": 0.5203
+    },
+    "head_cfg": {
+      "rule": "centroid",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.19449134171009064,
+        "l2_delta": 1.8811722993850708
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 1.1270451545715332,
+        "l2_delta": 1.1270451545715332
+      }
+    },
+    "operations": [
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "class-mean difference without variance scaling [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.048937,
+          0.073072,
+          0.071057,
+          0.066239,
+          0.080862,
+          0.1115,
+          0.116187,
+          0.083977
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "class-mean difference without variance scaling [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -6.262226
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter010.pt",
+      "sha256": "7b0e75b639b7d611e2d46007d0fe1727d850dfd51b3bd9e3df8bb42746110336"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter010.pt",
+    "notes": [],
+    "n_changed_parameters": 513,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 248,
+    "new_n_wrong_cv": 388
+  },
+  {
+    "id": "iter011",
+    "title": "Scale border-cell head weights by 0.25",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "Edge features restricted to the 4 centre cells reach val 59.5%, same as all 16 cells within noise (+-2%), with 4x fewer features.",
+    "problem": "Border cells add many correlated, background-dominated features and head variance.",
+    "hypothesis": "Down-weighting the 12 border cells to 0.25 reduces variance and background reliance.",
+    "selected": "head.weight border-cell entries (384 of 512), head.bias [closed-form head with mask]",
+    "expected": "Small val gain (~1 point).",
+    "risks": "Animal extremities near the border are lost.",
+    "started": "19:19:57",
+    "decision": "rejected",
+    "decision_reason": "diagnostic regression (cv +0.0040, val_f1 -0.0185)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.634,
+      "val_acc": 0.5883,
+      "val_f1": 0.5704,
+      "val_margin": 0.3919,
+      "cv_acc": 0.636,
+      "cv_margin": 0.6162
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": [
+        0.25,
+        0.25,
+        0.25,
+        0.25,
+        0.25,
+        1.0,
+        1.0,
+        0.25,
+        0.25,
+        1.0,
+        1.0,
+        0.25,
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    "parameter_diff": {
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.19321921467781067,
+        "l2_delta": 1.8101012706756592
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.42491674423217773,
+        "l2_delta": 0.42491674423217773
+      }
+    },
+    "operations": [
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "scale the 12 border cells' head weights by 0.25 [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.027317,
+          0.041052,
+          0.04058,
+          0.038019,
+          0.046557,
+          0.258592,
+          0.278064,
+          0.051496
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "scale the 12 border cells' head weights by 0.25 [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -6.964355
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter011.pt",
+      "sha256": "747b4655a6357b1d625705e74710abbf4e882f0263c46f1d490f8315c0e8196c"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter011.pt",
+    "notes": [],
+    "n_changed_parameters": 513,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 247,
+    "new_n_wrong_cv": 364
+  },
+  {
+    "id": "iter012",
+    "title": "Prune the 8 weakest conv3 channels",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "Head variance dominates: centre-only edge features (96) match all 512 on val. Per-channel mean |effect size| on train varies ~2x between channels.",
+    "problem": "Low-signal channels add variance to a head fitted from 1000 images.",
+    "hypothesis": "Zeroing the 8 conv3 filters (among 0-23) with the lowest mean |d| on TRAIN lowers head variance and raises val accuracy by >=1 point.",
+    "selected": "conv3.weight rows for the 8 weakest channels (8x32x3x3 = 2304 values) + head refit (513)",
+    "expected": "Small val gain; CV roughly unchanged.",
+    "risks": "Selection uses train effect sizes (data-derived); may remove channels useful in combination.",
+    "started": "19:20:34",
+    "decision": "rejected",
+    "decision_reason": "diagnostic regression (cv +0.0020, val_f1 -0.0120)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.636,
+      "val_acc": 0.5967,
+      "val_f1": 0.5769,
+      "val_margin": 0.3683,
+      "cv_acc": 0.634,
+      "cv_margin": 0.5927
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv3.weight": {
+        "changed": 216,
+        "total": 9216,
+        "max_abs_delta": 0.125,
+        "l2_delta": 0.6495190262794495
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.2127467840909958,
+        "l2_delta": 1.4398117065429688
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.18803024291992188,
+        "l2_delta": 0.18803024291992188
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(tensor([18,  4, 17, 19,  5,  6,  2,  8]),)",
+        "reason": "zero the 8 weakest conv3 filters [18, 4, 17, 19, 5, 6, 2, 8]",
+        "n_changed": 216,
+        "sample_old": [
+          0.03125,
+          0.0625,
+          0.03125,
+          0.0625,
+          0.125,
+          0.0625,
+          0.03125,
+          0.0625
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.075157,
+          0.112944,
+          0.111645,
+          0.104601,
+          0.128089,
+          0.177863,
+          0.191257,
+          0.14168
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.201241
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter012.pt",
+      "sha256": "64fd81e56935e796e9ab8e4ef561c480c43b8187025c32db2adb023486451b23"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter012.pt",
+    "notes": [
+      "pruned conv3 channels [18, 4, 17, 19, 5, 6, 2, 8] (lowest mean |d| on train)"
+    ],
+    "n_changed_parameters": 729,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 242,
+    "new_n_wrong_cv": 366
+  },
+  {
+    "id": "iter013",
+    "title": "Average colour over a larger area (Gaussian sigma 1.5 -> 5x5 box)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "Colour wiring (iter004) was the only accepted edit (+3.5 pts val). Colour is a region property; conv1 colour filters are small Gaussians, exposed to JPEG chroma noise.",
+    "problem": "Colour channels have low signal-to-noise at pixel level.",
+    "hypothesis": "A flat 5x5 box average of the colour-opponent signal yields a more reliable colour descriptor and a further >=1 point val gain.",
+    "selected": "conv1.weight[12:16] (4x3x5x5 = 300 values) + head refit (513)",
+    "expected": "Modest additional gain from cleaner colour.",
+    "risks": "Blurs colour boundaries; box filter has hard edges.",
+    "started": "19:20:35",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val +0.0000, cv +0.0000, val_f1 +0.0000)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3864,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5931
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv1.weight": {
+        "changed": 250,
+        "total": 1200,
+        "max_abs_delta": 0.045311734080314636,
+        "l2_delta": 0.2642376720905304
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.00244922935962677,
+        "l2_delta": 0.019517522305250168
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.00805044174194336,
+        "l2_delta": 0.00805044174194336
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(12, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 colour filter 12: 5x5 box average (was sigma 1.5 Gaussian)",
+        "n_changed": 50,
+        "sample_old": [
+          0.014419,
+          0.028084,
+          0.035073,
+          0.028084,
+          0.014419,
+          0.028084,
+          0.0547,
+          0.068312
+        ],
+        "sample_new": [
+          0.04,
+          0.04,
+          0.04,
+          0.04,
+          0.04,
+          0.04,
+          0.04,
+          0.04
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(13, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 colour filter 13: 5x5 box average (was sigma 1.5 Gaussian)",
+        "n_changed": 50,
+        "sample_old": [
+          -0.014419,
+          -0.028084,
+          -0.035073,
+          -0.028084,
+          -0.014419,
+          -0.028084,
+          -0.0547,
+          -0.068312
+        ],
+        "sample_new": [
+          -0.04,
+          -0.04,
+          -0.04,
+          -0.04,
+          -0.04,
+          -0.04,
+          -0.04,
+          -0.04
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(14, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 colour filter 14: 5x5 box average (was sigma 1.5 Gaussian)",
+        "n_changed": 75,
+        "sample_old": [
+          -0.007209,
+          -0.014042,
+          -0.017536,
+          -0.014042,
+          -0.007209,
+          -0.014042,
+          -0.02735,
+          -0.034156
+        ],
+        "sample_new": [
+          -0.02,
+          -0.02,
+          -0.02,
+          -0.02,
+          -0.02,
+          -0.02,
+          -0.02,
+          -0.02
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(15, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 colour filter 15: 5x5 box average (was sigma 1.5 Gaussian)",
+        "n_changed": 75,
+        "sample_old": [
+          0.007209,
+          0.014042,
+          0.017536,
+          0.014042,
+          0.007209,
+          0.014042,
+          0.02735,
+          0.034156
+        ],
+        "sample_new": [
+          0.02,
+          0.02,
+          0.02,
+          0.02,
+          0.02,
+          0.02,
+          0.02,
+          0.02
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.064448,
+          0.09602,
+          0.094763,
+          0.089258,
+          0.108568,
+          0.14965,
+          0.161457,
+          0.119952
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.397322
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter013.pt",
+      "sha256": "79b582deb518c716599018c2848cfb7a91f111eb758c66541c73bf50053a108a"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter013.pt",
+    "notes": [],
+    "n_changed_parameters": 763,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 236,
+    "new_n_wrong_cv": 368
+  },
+  {
+    "id": "iter014",
+    "title": "[round 2] Wire colour into conv2 parallel-pair filters 16-23",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "Colour entered via the blob path (iter004, accepted) but not via corner filters (iter008, rejected).",
+    "problem": "Colour is available to only one of four conv2 filter families.",
+    "hypothesis": "Giving the parallel-pair (stripe/texture) filters colour-opponent input adds colour-textured structure and raises val accuracy by >=1 point. Completes the colour-routing family.",
+    "selected": "conv2.weight[16:24,12:16] (72) + head refit (513)",
+    "expected": "Small gain if stripe+colour conjunctions matter (e.g. fur patterns).",
+    "risks": "Same dilution that sank iter008.",
+    "started": "19:24:13",
+    "decision": "rejected",
+    "decision_reason": "diagnostic regression (cv -0.0090, val_f1 -0.0262)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.625,
+      "val_acc": 0.5933,
+      "val_f1": 0.5627,
+      "val_margin": 0.3516,
+      "cv_acc": 0.623,
+      "cv_margin": 0.5668
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv2.weight": {
+        "changed": 72,
+        "total": 4608,
+        "max_abs_delta": 0.1111111119389534,
+        "l2_delta": 0.942808985710144
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.17417874932289124,
+        "l2_delta": 1.0952715873718262
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.5754990577697754,
+        "l2_delta": 0.5754990577697754
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(16, 12, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 12 into conv2 parallel-pair filter 16",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(17, 13, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 13 into conv2 parallel-pair filter 17",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(18, 14, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 14 into conv2 parallel-pair filter 18",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(19, 15, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 15 into conv2 parallel-pair filter 19",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(20, 12, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 12 into conv2 parallel-pair filter 20",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(21, 13, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 13 into conv2 parallel-pair filter 21",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(22, 14, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 14 into conv2 parallel-pair filter 22",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(23, 15, slice(None, None, None), slice(None, None, None))",
+        "reason": "wire colour-opponent channel 15 into conv2 parallel-pair filter 23",
+        "n_changed": 9,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.026231,
+          0.047191,
+          0.050349,
+          0.043874,
+          0.058006,
+          0.09113,
+          0.096437,
+          0.06171
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -6.813772
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter014.pt",
+      "sha256": "e7645d1770703f2b83c9566ec1c2022a7dd1b7f6a1f69ce4db5a8ab1ac11aac3"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter014.pt",
+    "notes": [],
+    "n_changed_parameters": 585,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 244,
+    "new_n_wrong_cv": 377
+  },
+  {
+    "id": "iter015",
+    "title": "[round 2] Half-strength conv2 bias gating on the accepted model",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "Full centring (iter002) moved val +0.7 pts but CV -0.5 pts: borderline, not rejected for harm.",
+    "problem": "Full centring may over-sparsify; ReLU2 is still ~95% active.",
+    "hypothesis": "Half-strength centring keeps some selectivity without regressions and gives a >=1 point val gain.",
+    "selected": "conv2.bias (32) + head refit (513)",
+    "expected": "Small gain.",
+    "risks": "Likely within noise.",
+    "started": "19:24:15",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val -0.0034, cv +0.0000, val_f1 -0.0064)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.638,
+      "val_acc": 0.6033,
+      "val_f1": 0.5825,
+      "val_margin": 0.3841,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5864
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv2.bias": {
+        "changed": 32,
+        "total": 32,
+        "max_abs_delta": 0.1754216104745865,
+        "l2_delta": 0.3630959093570709
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.02191460132598877,
+        "l2_delta": 0.17308345437049866
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 1.9490938186645508,
+        "l2_delta": 1.9490938186645508
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.bias",
+        "selector": "(slice(None, None, None),)",
+        "reason": "half-strength centring: bias_c = -0.5*mean(pre-activation_c over train)",
+        "n_changed": 32,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          -0.036599,
+          -0.032199,
+          -0.029718,
+          -0.03153,
+          -0.035536,
+          -0.031509,
+          -0.029671,
+          -0.03217
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.062752,
+          0.099462,
+          0.098122,
+          0.091809,
+          0.116568,
+          0.163737,
+          0.17647,
+          0.133342
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -5.440177
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter015.pt",
+      "sha256": "bed2f9ff2b108ec05b9e484cfe5fb7a02382a6013d2478a6f8857e7a35c5d6d3"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter015.pt",
+    "notes": [],
+    "n_changed_parameters": 545,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 238,
+    "new_n_wrong_cv": 368
+  },
+  {
+    "id": "iter016",
+    "title": "[round 2] Remove oriented-edge inputs from the colour/blob filters",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "Blob+colour filters 24-31 carry gabor/9 edge input plus DoG plus colour; the edge part duplicates channels 0-23, and colour is the only modality with proven value.",
+    "problem": "The colour signal is diluted by a redundant edge term inside the same filters.",
+    "hypothesis": "Zeroing the gabor taps (conv2.weight[24:32,0:8]) yields cleaner colour/DoG descriptors and raises val accuracy by >=1 point.",
+    "selected": "conv2.weight[24:32,0:8] (8x8x3x3 = 576 values) + head refit (513)",
+    "expected": "Cleaner colour features; possible loss of edge-conditioned blobs.",
+    "risks": "Loses blob+edge conjunction.",
+    "started": "19:24:16",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val -0.0034, cv +0.0010, val_f1 -0.0021)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.636,
+      "val_acc": 0.6033,
+      "val_f1": 0.5868,
+      "val_margin": 0.3867,
+      "cv_acc": 0.633,
+      "cv_margin": 0.5936
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv2.weight": {
+        "changed": 72,
+        "total": 4608,
+        "max_abs_delta": 0.0555555559694767,
+        "l2_delta": 0.471404492855072
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.023304790258407593,
+        "l2_delta": 0.20420745015144348
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.044034481048583984,
+        "l2_delta": 0.044034481048583984
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(slice(24, 32, None), slice(0, 8, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "remove the oriented-edge inputs from blob+colour filters 24-31 (keep DoG + colour only)",
+        "n_changed": 72,
+        "sample_old": [
+          0.055556,
+          0.055556,
+          0.055556,
+          0.055556,
+          0.055556,
+          0.055556,
+          0.055556,
+          0.055556
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.065751,
+          0.101454,
+          0.101197,
+          0.093272,
+          0.115348,
+          0.163019,
+          0.175979,
+          0.126755
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.345237
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter016.pt",
+      "sha256": "d793256effc4657d2fb62ee36fd4283df3afd7d34b52d03f65304a0ddd67f32a"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter016.pt",
+    "notes": [],
+    "n_changed_parameters": 585,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 238,
+    "new_n_wrong_cv": 367
+  },
+  {
+    "id": "iter017",
+    "title": "[round 3] Bright blob-pair detectors (eyes) in conv3 filters 25-28",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "All earlier edits re-weighted generic edge/colour features; none encoded facial structure. conv3 filters 25-31 are still redundant duplicates of filter 24 (wasted capacity).",
+    "problem": "No feature represents two symmetric blobs (eyes), a face cue: cats have large widely-spaced bright/glinting eyes, dogs smaller darker ones.",
+    "hypothesis": "Programming 4 conv3 filters as horizontal/vertical/diagonal pair detectors over the bright-blob channel (conv2 ch 24) gives the head a face-structure feature and lifts val accuracy by >=1 point.",
+    "selected": "conv3.weight[25:29] (4x32x3x3 = 1152 values) + head refit (513)",
+    "expected": "Gain if eye pairs fall inside the pooled 3x3 neighbourhood at 16x16 (~8 px at 64x64).",
+    "risks": "Pair separation (8 px) may be too small/large for most images; 24 itself is an edge+blob+colour mix.",
+    "started": "19:25:09",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val -0.0050, cv -0.0010, val_f1 -0.0017)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.636,
+      "val_acc": 0.6017,
+      "val_f1": 0.5872,
+      "val_margin": 0.3834,
+      "cv_acc": 0.631,
+      "cv_margin": 0.6009
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv3.weight": {
+        "changed": 288,
+        "total": 9216,
+        "max_abs_delta": 0.4921875,
+        "l2_delta": 1.5129648447036743
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.0519547164440155,
+        "l2_delta": 0.4123351275920868
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.0003180503845214844,
+        "l2_delta": 0.0003180503845214844
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(25, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 25: bright-blob (centre-surround on-centre, eye/glint) pair detector at offsets (1, 0),(1, 2)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.5,
+          -0.25,
+          0.5,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(26, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 26: bright-blob (centre-surround on-centre, eye/glint) pair detector at offsets (0, 1),(2, 1)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.0,
+          0.5,
+          0.0,
+          0.0,
+          -0.25,
+          0.0,
+          0.0,
+          0.5
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(27, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 27: bright-blob (centre-surround on-centre, eye/glint) pair detector at offsets (0, 0),(2, 2)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.5,
+          0.0,
+          0.0,
+          0.0,
+          -0.25,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(28, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 28: bright-blob (centre-surround on-centre, eye/glint) pair detector at offsets (0, 2),(2, 0)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.5,
+          0.0,
+          -0.25,
+          0.0,
+          0.5,
+          0.0
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.069727,
+          0.104783,
+          0.103578,
+          0.097043,
+          0.118834,
+          0.165013,
+          0.177438,
+          0.131443
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.388953
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter017.pt",
+      "sha256": "481a40d4538c9a414d10655a089fd0c0a80e5c1662d2faf1fe13a10bebdda946"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter017.pt",
+    "notes": [],
+    "n_changed_parameters": 801,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 239,
+    "new_n_wrong_cv": 369
+  },
+  {
+    "id": "iter018",
+    "title": "[round 3] Dark blob-pair detectors (nostril/dark eyes) in conv3 filters 29-31",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "Dogs' eyes and noses are dark blobs on lighter fur; the off-centre DoG channel (conv2 ch 25) is unused as a pair.",
+    "problem": "Dark paired structure is not represented.",
+    "hypothesis": "Pair detectors over the dark-blob channel add the complementary face cue and raise val accuracy >=1 point.",
+    "selected": "conv3.weight[29:32] (3x32x3x3 = 864 values) + head refit (513)",
+    "expected": "Gain if dark blob pairs separate dogs from cats.",
+    "risks": "Dark backgrounds create many spurious pairs.",
+    "started": "19:25:11",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val +0.0066, cv -0.0010, val_f1 +0.0069)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.633,
+      "val_acc": 0.6133,
+      "val_f1": 0.5958,
+      "val_margin": 0.4223,
+      "cv_acc": 0.631,
+      "cv_margin": 0.6017
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv3.weight": {
+        "changed": 216,
+        "total": 9216,
+        "max_abs_delta": 0.4921875,
+        "l2_delta": 1.307281255722046
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.04322155565023422,
+        "l2_delta": 0.2705863118171692
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.033162593841552734,
+        "l2_delta": 0.033162593841552734
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(29, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 29: dark-blob (off-centre, nostril/dark eye) pair detector at offsets (1, 0),(1, 2)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(30, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 30: dark-blob (off-centre, nostril/dark eye) pair detector at offsets (0, 1),(2, 1)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.weight",
+        "selector": "(31, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv3 filter 31: dark-blob (off-centre, nostril/dark eye) pair detector at offsets (0, 0),(2, 2)",
+        "n_changed": 72,
+        "sample_old": [
+          0.007812,
+          0.015625,
+          0.007812,
+          0.015625,
+          0.03125,
+          0.015625,
+          0.007812,
+          0.015625
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.068362,
+          0.102731,
+          0.10155,
+          0.095143,
+          0.116507,
+          0.161781,
+          0.173963,
+          0.128869
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.422434
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter018.pt",
+      "sha256": "0c7fbc584c07b0647cda531589ee931f1ed92f83ffa1481797b770973ddc0114"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter018.pt",
+    "notes": [],
+    "n_changed_parameters": 729,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 232,
+    "new_n_wrong_cv": 369
+  },
+  {
+    "id": "iter019",
+    "title": "[round 3] Larger centre-surround blobs in conv1 (sigma 0.8 -> 1.5)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "The two small-scale DoG filters (sigma 0.8/1.6, ~3 px blobs) feed the blob+colour path; at 64x64 an eye or nose is a ~4-8 px blob.",
+    "problem": "The blob detectors respond to pixel-scale texture and JPEG noise more than to facial parts.",
+    "hypothesis": "Matching DoG scale to part size (sigma 1.5/3.0) makes the blob channels respond to parts and raises val accuracy by >=1 point.",
+    "selected": "conv1.weight[10:12] (2x3x5x5 = 150 values) + head refit (513)",
+    "expected": "Cleaner part-scale blob evidence.",
+    "risks": "5x5 support truncates a sigma-3 surround; less fine detail.",
+    "started": "19:25:32",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val +0.0000, cv +0.0020, val_f1 +0.0000)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.64,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.388,
+      "cv_acc": 0.634,
+      "cv_margin": 0.5955
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv1.weight": {
+        "changed": 150,
+        "total": 1200,
+        "max_abs_delta": 0.0676937997341156,
+        "l2_delta": 0.1426575630903244
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.0038625653833150864,
+        "l2_delta": 0.031229913234710693
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.010184764862060547,
+        "l2_delta": 0.010184764862060547
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(10, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 centre-surround filter 10: DoG sigma (0.8,1.6) -> (1.5,3.0) (eye/nose-sized blobs)",
+        "n_changed": 75,
+        "sample_old": [
+          -0.007791,
+          -0.00997,
+          -0.009645,
+          -0.00997,
+          -0.007791,
+          -0.00997,
+          0.000618,
+          0.020199
+        ],
+        "sample_new": [
+          -0.016976,
+          -0.008358,
+          -0.003684,
+          -0.008358,
+          -0.016976,
+          -0.008358,
+          0.009894,
+          0.019543
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(11, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 centre-surround filter 11: DoG sigma (0.8,1.6) -> (1.5,3.0) (eye/nose-sized blobs)",
+        "n_changed": 75,
+        "sample_old": [
+          0.007791,
+          0.00997,
+          0.009645,
+          0.00997,
+          0.007791,
+          0.00997,
+          -0.000618,
+          -0.020199
+        ],
+        "sample_new": [
+          0.016976,
+          0.008358,
+          0.003684,
+          0.008358,
+          0.016976,
+          0.008358,
+          -0.009894,
+          -0.019543
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.063764,
+          0.095822,
+          0.09472,
+          0.088744,
+          0.108672,
+          0.150901,
+          0.162264,
+          0.120202
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.399456
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter019.pt",
+      "sha256": "a39424c2cb5c2a12f634c05f368a1ccd27f14681845e65faff183c3e9045d1aa"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter019.pt",
+    "notes": [],
+    "n_changed_parameters": 663,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 236,
+    "new_n_wrong_cv": 366
+  },
+  {
+    "id": "iter020",
+    "title": "[round 4] Odd-phase (sine) Gabors in conv1: step-edge detectors",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "conv1 oriented filters are cos-phase (even): they respond to thin bars, not to step edges such as body/ear/muzzle outlines against background.",
+    "problem": "Outline evidence is under-represented.",
+    "hypothesis": "Replacing the 8 even Gabors with odd sine-phase Gabors (same wavelength 4, sigma 1.5) detects silhouette edges and raises val accuracy by >=1 point.",
+    "selected": "conv1.weight[0:8] (600 values) + head refit (513)",
+    "expected": "Outline-driven features; may lose bar/whisker response.",
+    "risks": "Polarity-sensitive: ReLU keeps only one edge polarity per orientation (8 not 16 channels).",
+    "started": "19:27:10",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val -0.0067, cv -0.0080, val_f1 +0.0029)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.627,
+      "val_acc": 0.6,
+      "val_f1": 0.5918,
+      "val_margin": 0.3797,
+      "cv_acc": 0.624,
+      "cv_margin": 0.5835
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv1.weight": {
+        "changed": 600,
+        "total": 1200,
+        "max_abs_delta": 0.08789000660181046,
+        "l2_delta": 0.7077375650405884
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.09159527719020844,
+        "l2_delta": 0.7753350138664246
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.2584376335144043,
+        "l2_delta": 0.2584376335144043
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(0, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 0: even (cosine) -> odd (sine) Gabor: step-edge/outline detector",
+        "n_changed": 75,
+        "sample_old": [
+          -0.008755,
+          -0.001102,
+          0.017511,
+          -0.001102,
+          -0.008755,
+          -0.016007,
+          -0.001102,
+          0.035152
+        ],
+        "sample_new": [
+          0.0,
+          -0.017952,
+          0.0,
+          0.017952,
+          -0.0,
+          0.0,
+          -0.034965,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(1, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 1: even (cosine) -> odd (sine) Gabor: step-edge/outline detector",
+        "n_changed": 75,
+        "sample_old": [
+          -0.005355,
+          -0.012915,
+          0.004167,
+          0.010821,
+          -0.002447,
+          -0.013582,
+          -0.013157,
+          0.024107
+        ],
+        "sample_new": [
+          0.005633,
+          -0.006268,
+          -0.01557,
+          0.003293,
+          0.006804,
+          0.004733,
+          -0.023071,
+          -0.018386
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(2, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 2: even (cosine) -> odd (sine) Gabor: step-edge/outline detector",
+        "n_changed": 75,
+        "sample_old": [
+          -0.00402,
+          -0.014791,
+          -0.011918,
+          0.00338,
+          0.004264,
+          -0.014791,
+          -0.017312,
+          0.011485
+        ],
+        "sample_new": [
+          0.007005,
+          0.002681,
+          -0.014065,
+          -0.012683,
+          0.0,
+          0.002681,
+          -0.021937,
+          -0.03085
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(3, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 3: even (cosine) -> odd (sine) Gabor: step-edge/outline detector",
+        "n_changed": 75,
+        "sample_old": [
+          -0.005355,
+          -0.013582,
+          -0.017145,
+          -0.010148,
+          -0.002447,
+          -0.012915,
+          -0.013157,
+          0.00212
+        ],
+        "sample_new": [
+          0.005633,
+          0.004733,
+          -0.003953,
+          -0.009954,
+          -0.006804,
+          -0.006268,
+          -0.023071,
+          -0.032277
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(4, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 4: even (cosine) -> odd (sine) Gabor: step-edge/outline detector",
+        "n_changed": 75,
+        "sample_old": [
+          -0.008755,
+          -0.016007,
+          -0.019716,
+          -0.016007,
+          -0.008755,
+          -0.001102,
+          -0.001102,
+          -0.001102
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          -0.017952,
+          -0.034965,
+          -0.043666
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(5, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 5: even (cosine) -> odd (sine) Gabor: step-edge/outline detector",
+        "n_changed": 75,
+        "sample_old": [
+          -0.002447,
+          -0.010148,
+          -0.017145,
+          -0.013582,
+          -0.005355,
+          0.010821,
+          0.014872,
+          0.00212
+        ],
+        "sample_new": [
+          -0.006804,
+          -0.009954,
+          -0.003953,
+          0.004733,
+          0.005633,
+          -0.003293,
+          -0.019558,
+          -0.032277
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(6, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 6: even (cosine) -> odd (sine) Gabor: step-edge/outline detector",
+        "n_changed": 75,
+        "sample_old": [
+          0.004264,
+          0.00338,
+          -0.011918,
+          -0.014791,
+          -0.00402,
+          0.00338,
+          0.022542,
+          0.011485
+        ],
+        "sample_new": [
+          0.0,
+          -0.012683,
+          -0.014065,
+          0.002681,
+          0.007005,
+          0.012683,
+          0.0,
+          -0.03085
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(7, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 oriented filter 7: even (cosine) -> odd (sine) Gabor: step-edge/outline detector",
+        "n_changed": 75,
+        "sample_old": [
+          -0.002447,
+          0.010821,
+          0.004167,
+          -0.012915,
+          -0.005355,
+          -0.010148,
+          0.014872,
+          0.024107
+        ],
+        "sample_new": [
+          0.006804,
+          0.003293,
+          -0.01557,
+          -0.006268,
+          0.005633,
+          0.009954,
+          0.019558,
+          -0.018386
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.051468,
+          0.110859,
+          0.099693,
+          0.078204,
+          0.081112,
+          0.148753,
+          0.159211,
+          0.104663
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.647709
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter020.pt",
+      "sha256": "eeef694ee03e41137cc10781230da9837df6f95f69bd02203e8c4b491df87a29"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter020.pt",
+    "notes": [],
+    "n_changed_parameters": 1113,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 240,
+    "new_n_wrong_cv": 376
+  },
+  {
+    "id": "iter021",
+    "title": "[round 4] Sharper orientation tuning in conv2 line filters",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "conv2 line filters 0-7 also take 0.5 weight from the two neighbouring orientation channels at the centre tap.",
+    "problem": "Broad tuning blurs orientation, reducing the diversity of the 8 line channels.",
+    "hypothesis": "Removing the neighbour taps makes each line channel orientation-specific and raises val accuracy by >=1 point.",
+    "selected": "conv2.weight line-filter neighbour taps (16 values) + head refit (513)",
+    "expected": "More distinct line channels.",
+    "risks": "Noisier, less shift/rotation tolerance.",
+    "started": "19:27:12",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val -0.0050, cv +0.0020, val_f1 -0.0060)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.635,
+      "val_acc": 0.6017,
+      "val_f1": 0.5829,
+      "val_margin": 0.3827,
+      "cv_acc": 0.634,
+      "cv_margin": 0.5928
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv2.weight": {
+        "changed": 16,
+        "total": 4608,
+        "max_abs_delta": 0.125,
+        "l2_delta": 0.5
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.03482639789581299,
+        "l2_delta": 0.2599077820777893
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.06131935119628906,
+        "l2_delta": 0.06131935119628906
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[0, 1, 1, 1]",
+        "reason": "line filter 0: drop the 0.5 tap from neighbouring orientation channel 1",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[0, 7, 1, 1]",
+        "reason": "line filter 0: drop the 0.5 tap from neighbouring orientation channel 7",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[1, 2, 1, 1]",
+        "reason": "line filter 1: drop the 0.5 tap from neighbouring orientation channel 2",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[1, 0, 1, 1]",
+        "reason": "line filter 1: drop the 0.5 tap from neighbouring orientation channel 0",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[2, 3, 1, 1]",
+        "reason": "line filter 2: drop the 0.5 tap from neighbouring orientation channel 3",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[2, 1, 1, 1]",
+        "reason": "line filter 2: drop the 0.5 tap from neighbouring orientation channel 1",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[3, 4, 1, 1]",
+        "reason": "line filter 3: drop the 0.5 tap from neighbouring orientation channel 4",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[3, 2, 1, 1]",
+        "reason": "line filter 3: drop the 0.5 tap from neighbouring orientation channel 2",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[4, 5, 1, 1]",
+        "reason": "line filter 4: drop the 0.5 tap from neighbouring orientation channel 5",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[4, 3, 1, 1]",
+        "reason": "line filter 4: drop the 0.5 tap from neighbouring orientation channel 3",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[5, 6, 1, 1]",
+        "reason": "line filter 5: drop the 0.5 tap from neighbouring orientation channel 6",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[5, 4, 1, 1]",
+        "reason": "line filter 5: drop the 0.5 tap from neighbouring orientation channel 4",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[6, 7, 1, 1]",
+        "reason": "line filter 6: drop the 0.5 tap from neighbouring orientation channel 7",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[6, 5, 1, 1]",
+        "reason": "line filter 6: drop the 0.5 tap from neighbouring orientation channel 5",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[7, 0, 1, 1]",
+        "reason": "line filter 7: drop the 0.5 tap from neighbouring orientation channel 0",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv2.weight",
+        "selector": "[7, 6, 1, 1]",
+        "reason": "line filter 7: drop the 0.5 tap from neighbouring orientation channel 6",
+        "n_changed": 1,
+        "sample_old": [
+          0.125
+        ],
+        "sample_new": [
+          0.0
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.064538,
+          0.099212,
+          0.098979,
+          0.091853,
+          0.113332,
+          0.159606,
+          0.171477,
+          0.124989
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.327952
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter021.pt",
+      "sha256": "fb9ae1071f8a6f189b344842ffd7c3ff1a5107747736ac4675510df612c51463"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter021.pt",
+    "notes": [],
+    "n_changed_parameters": 529,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 239,
+    "new_n_wrong_cv": 366
+  },
+  {
+    "id": "iter022",
+    "title": "[round 4] Half-strength conv3 bias gating on the accepted model",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "relu3 is 100% active; full centring (iter003) regressed CV by 2.4 pts.",
+    "problem": "Final features never gate.",
+    "hypothesis": "Half-strength centring adds mild gating without the regression and raises val accuracy by >=1 point.",
+    "selected": "conv3.bias (32) + head refit (513)",
+    "expected": "Small selectivity gain.",
+    "risks": "Likely within noise.",
+    "started": "19:27:13",
+    "decision": "rejected",
+    "decision_reason": "diagnostic regression (cv -0.0040, val_f1 -0.0185)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.634,
+      "val_acc": 0.5933,
+      "val_f1": 0.5704,
+      "val_margin": 0.3801,
+      "cv_acc": 0.628,
+      "cv_margin": 0.5742
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv3.bias": {
+        "changed": 32,
+        "total": 32,
+        "max_abs_delta": 0.12666530907154083,
+        "l2_delta": 0.44037777185440063
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.027524083852767944,
+        "l2_delta": 0.24044497311115265
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 2.9940857887268066,
+        "l2_delta": 2.9940857887268066
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv3.bias",
+        "selector": "(slice(None, None, None),)",
+        "reason": "half-strength centring: bias_c = -0.5*mean(pre-activation_c over train)",
+        "n_changed": 32,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          -0.075529,
+          -0.049646,
+          -0.048563,
+          -0.078751,
+          -0.074304,
+          -0.048852,
+          -0.048477,
+          -0.079487
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.060736,
+          0.101812,
+          0.09791,
+          0.092153,
+          0.116828,
+          0.168163,
+          0.178528,
+          0.135565
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -4.395185
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter022.pt",
+      "sha256": "8fec3dfe12351ab886b7a636e189129080c642c37883b7c9e4197c2dac17140a"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter022.pt",
+    "notes": [],
+    "n_changed_parameters": 545,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 244,
+    "new_n_wrong_cv": 372
+  },
+  {
+    "id": "iter023",
+    "title": "[round 4] Hierarchy ablation: pass conv1 features straight through conv2/conv3",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "22 edits of every kind left val at 60-61%; the head (closed-form on 512 features) may be doing all the work.",
+    "problem": "Unknown whether the hand-composed line/corner/parallel/blob hierarchy contributes anything.",
+    "hypothesis": "Replacing conv2/conv3 with identity routing of the 16 conv1 channels (256 informative features, 256 zero) gives accuracy within 1 point of the accepted model, i.e. the hierarchy adds nothing; if it *raises* val by >=1 point (fewer noisy features) it is accepted.",
+    "selected": "conv2.weight (4608) + conv3.weight (9216) replaced + head refit (513)",
+    "expected": "Roughly equal accuracy (hierarchy decorative) or slightly better from lower head variance.",
+    "risks": "Loses the colour wiring's blob-path structure (colour reaches the head only through channels 12-15).",
+    "started": "19:27:30",
+    "decision": "rejected",
+    "decision_reason": "diagnostic regression (cv +0.0060, val_f1 -0.0200)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.645,
+      "val_acc": 0.5983,
+      "val_f1": 0.5689,
+      "val_margin": 0.4593,
+      "cv_acc": 0.638,
+      "cv_margin": 0.6015
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv2.weight": {
+        "changed": 368,
+        "total": 4608,
+        "max_abs_delta": 1.0,
+        "l2_delta": 4.492834568023682
+      },
+      "conv3.weight": {
+        "changed": 1224,
+        "total": 9216,
+        "max_abs_delta": 0.25,
+        "l2_delta": 1.7984368801116943
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.41230252385139465,
+        "l2_delta": 3.2261831760406494
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.27586841583251953,
+        "l2_delta": 0.27586841583251953
+      }
+    },
+    "operations": [
+      {
+        "op": "replace_parameter",
+        "parameter": "conv2.weight",
+        "selector": "all",
+        "reason": "conv2: channel j <- conv1 channel j (centre tap), channels 16-31 = 0",
+        "n_changed": 368,
+        "sample_old": [
+          0.25,
+          0.25,
+          0.25,
+          0.125,
+          0.125,
+          0.125,
+          0.25,
+          0.25
+        ],
+        "sample_new": [
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "conv3.weight",
+        "selector": "all",
+        "reason": "conv3: channel j <- conv2 channel j (blur), channels 16-31 = 0",
+        "n_changed": 1224,
+        "sample_old": [
+          0.015625,
+          0.03125,
+          0.015625,
+          0.03125,
+          0.0625,
+          0.03125,
+          0.015625,
+          0.03125
+        ],
+        "sample_new": [
+          0.0625,
+          0.125,
+          0.0625,
+          0.125,
+          0.25,
+          0.125,
+          0.0625,
+          0.125
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.246917,
+          0.22684,
+          0.211139,
+          0.248556,
+          0.268876,
+          0.288957,
+          0.314482,
+          0.306772
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.113403
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter023.pt",
+      "sha256": "59f8c5c332c3f05dc3efb785f85c62ada41b37b3cc5adc5486e659229a86d2da"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter023.pt",
+    "notes": [],
+    "n_changed_parameters": 2105,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 241,
+    "new_n_wrong_cv": 362
+  },
+  {
+    "id": "iter024",
+    "title": "[round 5] Multi-scale passthrough: 16 fine + 16 coarse conv1 feature maps",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "iter023: the hand-composed hierarchy is decorative; the conv1 features + closed-form head give the same accuracy. So information lives in conv1 features, and 16 of 32 final channels were empty in iter023.",
+    "problem": "The head sees only fine-scale (~5 px) structure; coarse regional statistics (fur colour/texture over a region, silhouette) are missing, and half the channels are wasted.",
+    "hypothesis": "Filling the 16 empty channels with 3x3-box (coarser) averages of the same conv1 features gives 512 informative features across two scales and lifts val accuracy by >=1 point over the accepted model.",
+    "selected": "conv2.weight (4608) + conv3.weight (9216) replaced + head refit (513)",
+    "expected": "Higher accuracy if scale diversity helps; head variance rises with more distinct features.",
+    "risks": "Colour wiring from iter004 is dropped (colour enters only via channels 12-15 and their coarse copies).",
+    "started": "19:29:05",
+    "decision": "rejected",
+    "decision_reason": "diagnostic regression (cv +0.0080, val_f1 -0.0114)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.647,
+      "val_acc": 0.605,
+      "val_f1": 0.5775,
+      "val_margin": 0.4562,
+      "cv_acc": 0.64,
+      "cv_margin": 0.6075
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv2.weight": {
+        "changed": 412,
+        "total": 4608,
+        "max_abs_delta": 1.0,
+        "l2_delta": 4.423046112060547
+      },
+      "conv3.weight": {
+        "changed": 1296,
+        "total": 9216,
+        "max_abs_delta": 0.25,
+        "l2_delta": 2.281035900115967
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.22743412852287292,
+        "l2_delta": 1.9283934831619263
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.2014608383178711,
+        "l2_delta": 0.2014608383178711
+      }
+    },
+    "operations": [
+      {
+        "op": "replace_parameter",
+        "parameter": "conv2.weight",
+        "selector": "all",
+        "reason": "conv2: ch j <- conv1 ch j (fine); ch 16+j <- 3x3 box mean of conv1 ch j (coarse)",
+        "n_changed": 412,
+        "sample_old": [
+          0.25,
+          0.25,
+          0.25,
+          0.125,
+          0.125,
+          0.125,
+          0.25,
+          0.25
+        ],
+        "sample_new": [
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "conv3.weight",
+        "selector": "all",
+        "reason": "conv3: identity routing with blur for all 32 channels",
+        "n_changed": 1296,
+        "sample_old": [
+          0.015625,
+          0.03125,
+          0.015625,
+          0.03125,
+          0.0625,
+          0.03125,
+          0.015625,
+          0.03125
+        ],
+        "sample_new": [
+          0.0625,
+          0.125,
+          0.0625,
+          0.125,
+          0.25,
+          0.125,
+          0.0625,
+          0.125
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.137763,
+          0.126562,
+          0.117802,
+          0.138678,
+          0.150015,
+          0.161219,
+          0.17546,
+          0.171159
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.18781
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter024.pt",
+      "sha256": "f7d1fb1e8a0b23baac1b9cabc99f2b894e3193194a87b965cad69dd92be742df"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter024.pt",
+    "notes": [],
+    "n_changed_parameters": 2221,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 237,
+    "new_n_wrong_cv": 360
+  },
+  {
+    "id": "iter025",
+    "title": "[round 6] Spatially shared head (32 effective weights)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "24 extractor/head edits plateau at val ~60%, CV ~63%. The 512-feature head is fitted from only 1,000 images, and centre-only edge features (96) already match it: variance, not features, may be the limit.",
+    "problem": "512 free head weights from 1,000 samples: high estimation variance.",
+    "hypothesis": "Sharing each channel's weight across all 16 cells (LDA over 32 cell-averaged features) cuts effective parameters 16x, lowers variance and raises val accuracy by >=1 point, at the cost of spatial layout.",
+    "selected": "head.weight (512 tied to 32 values) + head.bias [closed-form head, rule lda_pooled]",
+    "expected": "Higher CV and val if variance dominates; lower if spatial layout carries the signal.",
+    "risks": "Loses where-in-the-image information (centre vs border).",
+    "started": "19:30:15",
+    "decision": "rejected",
+    "decision_reason": "diagnostic regression (cv -0.0030, val_f1 -0.0150)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.625,
+      "val_acc": 0.5917,
+      "val_f1": 0.5739,
+      "val_margin": 0.3455,
+      "cv_acc": 0.629,
+      "cv_margin": 0.5521
+    },
+    "head_cfg": {
+      "rule": "lda_pooled",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.10568374395370483,
+        "l2_delta": 0.9628206491470337
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.015401363372802734,
+        "l2_delta": 0.015401363372802734
+      }
+    },
+    "operations": [
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "channel weights shared across the 16 cells [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.117249,
+          0.117249,
+          0.117249,
+          0.117249,
+          0.117249,
+          0.117249,
+          0.117249,
+          0.117249
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "channel weights shared across the 16 cells [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.404673
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter025.pt",
+      "sha256": "d8e98b9a82f34ef76612dba2776791f8c400039323e84546d87f94bee6821eac"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter025.pt",
+    "notes": [],
+    "n_changed_parameters": 513,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 245,
+    "new_n_wrong_cv": 371
+  },
+  {
+    "id": "iter026",
+    "title": "[round 6] Centre/border shared head (64 effective weights)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "Per-cell effect sizes: centre cells ~0.43, borders 0.2-0.37 (train).",
+    "problem": "iter025 discards all spatial layout; centre vs border is the one spatial split the data supports.",
+    "hypothesis": "LDA over 64 features (centre-cell mean, border-cell mean per channel) keeps the object-vs-background split with 8x fewer weights than the full head and raises val accuracy by >=1 point.",
+    "selected": "head.weight (512 tied to 64 values) + head.bias [closed-form head, rule lda_pooled_cb]",
+    "expected": "Best of both if variance and coarse layout matter.",
+    "risks": "Small gain, within noise.",
+    "started": "19:30:17",
+    "decision": "rejected",
+    "decision_reason": "diagnostic regression (cv +0.0000, val_f1 -0.0110)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.631,
+      "val_acc": 0.5933,
+      "val_f1": 0.5779,
+      "val_margin": 0.3785,
+      "cv_acc": 0.632,
+      "cv_margin": 0.6021
+    },
+    "head_cfg": {
+      "rule": "lda_pooled_cb",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.16376514732837677,
+        "l2_delta": 1.4204593896865845
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.1654224395751953,
+        "l2_delta": 0.1654224395751953
+      }
+    },
+    "operations": [
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "channel weights shared within centre / border cell groups [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.056447,
+          0.056447,
+          0.056447,
+          0.056447,
+          0.056447,
+          0.283326,
+          0.283326,
+          0.056447
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "channel weights shared within centre / border cell groups [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -7.223849
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter026.pt",
+      "sha256": "9f948bf1564253821b3bb9316fd43b053a00f0783b3128878fcb01753d54436b"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter026.pt",
+    "notes": [],
+    "n_changed_parameters": 513,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 244,
+    "new_n_wrong_cv": 368
+  },
+  {
+    "id": "iter027",
+    "title": "[round 6] Luminance-distribution (soft histogram) ramps replace the DoG blobs",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-002/iter004.pt",
+    "observed": "iter023/iter025/iter026: pooled low-level features plateau at CV ~63% whatever the head or hierarchy; the DoG channels 8-11 are the least informative conv1 group and encode only local contrast.",
+    "problem": "No feature describes the global brightness distribution (dark fur / bright background), the kind of colour-histogram cue known to separate pet photos.",
+    "hypothesis": "Four thresholded single-pixel luminance ramps (bright 0.4, very bright 1.1, dark 0.4, very dark 1.1) pooled over the grid give soft histogram masses and raise val accuracy by >=1 point.",
+    "selected": "conv1.weight[8:12] (300 values), conv1.bias[8:12] (4) + head refit (513)",
+    "expected": "Gain only if luminance distribution carries class information beyond edges and colour.",
+    "risks": "Label correlation with brightness is only +0.09 on train; likely noise.",
+    "started": "19:30:46",
+    "decision": "rejected",
+    "decision_reason": "diagnostic regression (cv -0.0260, val_f1 -0.0165)",
+    "previous_metrics": {
+      "train_acc": 0.641,
+      "val_acc": 0.6067,
+      "val_f1": 0.5889,
+      "val_margin": 0.3894,
+      "cv_acc": 0.632,
+      "cv_margin": 0.5954
+    },
+    "new_metrics": {
+      "train_acc": 0.608,
+      "val_acc": 0.5917,
+      "val_f1": 0.5724,
+      "val_margin": 0.3653,
+      "cv_acc": 0.606,
+      "cv_margin": 0.5589
+    },
+    "head_cfg": {
+      "rule": "lda",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv1.weight": {
+        "changed": 300,
+        "total": 1200,
+        "max_abs_delta": 0.7170326709747314,
+        "l2_delta": 1.383713960647583
+      },
+      "conv1.bias": {
+        "changed": 4,
+        "total": 16,
+        "max_abs_delta": 1.100000023841858,
+        "l2_delta": 1.6552945375442505
+      },
+      "head.weight": {
+        "changed": 512,
+        "total": 512,
+        "max_abs_delta": 0.10713683068752289,
+        "l2_delta": 0.627796471118927
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.7017931938171387,
+        "l2_delta": 0.7017931938171387
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(8, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 filter 8: single-pixel luminance ramp, sign +1",
+        "n_changed": 75,
+        "sample_old": [
+          -0.011071,
+          -0.009574,
+          -0.007155,
+          -0.009574,
+          -0.011071,
+          -0.009574,
+          0.005781,
+          0.020304
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv1.bias",
+        "selector": "[8]",
+        "reason": "conv1 filter 8: threshold 0.4 (ReLU(sign*L - 0.4))",
+        "n_changed": 1,
+        "sample_old": [
+          0.0
+        ],
+        "sample_new": [
+          -0.4
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(9, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 filter 9: single-pixel luminance ramp, sign +1",
+        "n_changed": 75,
+        "sample_old": [
+          0.011071,
+          0.009574,
+          0.007155,
+          0.009574,
+          0.011071,
+          0.009574,
+          -0.005781,
+          -0.020304
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv1.bias",
+        "selector": "[9]",
+        "reason": "conv1 filter 9: threshold 1.1 (ReLU(sign*L - 1.1))",
+        "n_changed": 1,
+        "sample_old": [
+          0.0
+        ],
+        "sample_new": [
+          -1.1
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(10, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 filter 10: single-pixel luminance ramp, sign -1",
+        "n_changed": 75,
+        "sample_old": [
+          -0.007791,
+          -0.00997,
+          -0.009645,
+          -0.00997,
+          -0.007791,
+          -0.00997,
+          0.000618,
+          0.020199
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv1.bias",
+        "selector": "[10]",
+        "reason": "conv1 filter 10: threshold 0.4 (ReLU(sign*L - 0.4))",
+        "n_changed": 1,
+        "sample_old": [
+          0.0
+        ],
+        "sample_new": [
+          -0.4
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(11, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 filter 11: single-pixel luminance ramp, sign -1",
+        "n_changed": 75,
+        "sample_old": [
+          0.007791,
+          0.00997,
+          0.009645,
+          0.00997,
+          0.007791,
+          0.00997,
+          -0.000618,
+          -0.020199
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter",
+        "parameter": "conv1.bias",
+        "selector": "[11]",
+        "reason": "conv1 filter 11: threshold 1.1 (ReLU(sign*L - 1.1))",
+        "n_changed": 1,
+        "sample_old": [
+          0.0
+        ],
+        "sample_new": [
+          -1.1
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 512,
+        "sample_old": [
+          0.063092,
+          0.094812,
+          0.093722,
+          0.087809,
+          0.107526,
+          0.14931,
+          0.160553,
+          0.118935
+        ],
+        "sample_new": [
+          0.076733,
+          0.109779,
+          0.122948,
+          0.108779,
+          0.125738,
+          0.14572,
+          0.156038,
+          0.12738
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -7.389271
+        ],
+        "sample_new": [
+          -8.091064
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-002/iter027.pt",
+      "sha256": "fff55583d20d11e45934074c16194d5cb3b0a1b9e940ada9d54a3f71f8180e82"
+    },
+    "full_diff_file": "experiments/wsp-002/param_changes/iter027.pt",
+    "notes": [],
+    "n_changed_parameters": 817,
+    "prev_n_wrong_val": 236,
+    "new_n_wrong_val": 245,
+    "new_n_wrong_cv": 394
+  }
+]

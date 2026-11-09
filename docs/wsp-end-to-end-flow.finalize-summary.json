@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "/Users/prashant.malge/Documents/study/noobs/wsp/.archify/workflow-wsp-end-to-end-flow-20261108-211024/candidate.json",
+    "sha256": "e0e13580fe188c800a336c21af041a2977789f845d8f93d2183569b8ec6cfc18",
+    "bytes": 7571
+  },
+  "artifact": {
+    "path": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.html",
+    "sha256": "cd3040148a33e7cbe1814d74532b14ca9796d15c5a9d992b22c69affafbac12b",
+    "bytes": 835726
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "fail"
+  },
+  "failedStage": "browser-check",
+  "diagnostics": [
+    {
+      "code": "viewer/evidence-path-conflict",
+      "severity": "error",
+      "message": "browser-check will not replace the existing unowned evidence path \"/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.browser-check.json\".",
+      "subject": {
+        "artifact": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.html",
+        "evidencePath": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.browser-check.json"
+      },
+      "evidence": {
+        "reason": {
+          "code": "ownership-artifact-mismatch"
+        }
+      },
+      "supportedFixes": [
+        "move the conflicting file aside, or choose a separate --out-dir, then rerun browser-check"
+      ]
+    }
+  ],
+  "diagnosticSummary": {
+    "total": 1,
+    "shown": 1,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.finalize.json",
+    "summaryReceipt": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.finalize-summary.json",
+    "browserCheckReceipt": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-11-08T15:40:43.749Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 750,
+  "browserCheck": {
+    "requested": true,
+    "ran": false
+  }
+}

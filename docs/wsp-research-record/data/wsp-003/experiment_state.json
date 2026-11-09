@@ -1,0 +1,139 @@
+{
+  "experiment_id": "wsp-003",
+  "status": "complete",
+  "architecture": "CatDogNet: conv5x5(3->16)-pool-conv3x3(16->32)-pool-conv3x3(32->32)-avgpool4x4-linear(512->1)",
+  "iteration": 21,
+  "last_completed": "iter021",
+  "completed_ids": [
+    "iter000",
+    "iter001",
+    "iter002",
+    "iter003",
+    "iter004",
+    "iter005",
+    "iter006",
+    "iter007",
+    "iter008",
+    "iter009",
+    "iter010",
+    "iter011",
+    "iter012",
+    "iter013",
+    "iter014",
+    "iter015",
+    "iter016",
+    "iter017",
+    "iter018",
+    "iter019",
+    "iter020",
+    "iter021"
+  ],
+  "accepted_ids": [
+    "iter000",
+    "iter001",
+    "iter005",
+    "iter009",
+    "iter013"
+  ],
+  "rejected_ids": [
+    "iter002",
+    "iter003",
+    "iter004",
+    "iter006",
+    "iter007",
+    "iter008",
+    "iter010",
+    "iter011",
+    "iter012",
+    "iter014",
+    "iter015",
+    "iter016",
+    "iter017",
+    "iter018",
+    "iter019",
+    "iter020",
+    "iter021"
+  ],
+  "baseline_checkpoint": "checkpoints/wsp-003/iter000_initial.pt",
+  "baseline_sha256": "e050a6eed84f94d1b0597d82324704ab47a59482c7a1f01de193c0078e326688",
+  "accepted_checkpoint": "checkpoints/wsp-003/iter013.pt",
+  "accepted_sha256": "8ec523ac2ba2f984eaea9e9385d5911ead30ba5c92724954140dd30e02e58a57",
+  "head_cfg": {
+    "rule": "lda_full",
+    "cell_mask": null
+  },
+  "metrics": {
+    "train_acc": 0.7674,
+    "val_acc": 0.7663,
+    "val_f1": 0.7587,
+    "val_margin": 1.1243,
+    "cv_acc": 0.7564,
+    "cv_margin": 1.1082
+  },
+  "baseline_metrics": {
+    "train_acc": 0.6021,
+    "val_acc": 0.6013,
+    "val_f1": 0.5862,
+    "val_margin": 0.473,
+    "cv_acc": 0.6014,
+    "cv_margin": 0.462
+  },
+  "splits": {
+    "manifest": "experiments/wsp-003/manifest.json"
+  },
+  "manifest": "experiments/wsp-003/manifest.json",
+  "test_evaluated": true,
+  "acceptance_rule": "wsp-003, pre-registered before any edit. Accept iff (a) validation accuracy rises by >= 0.010 (1 percentage point) over the accepted checkpoint AND (b) 5-fold CV accuracy on TRAIN does not fall by more than 0.010 AND (c) validation F1 does not fall by more than 0.010. Train accuracy is recorded but never used to accept. The sealed test split is never read during iterations.",
+  "next_action": "write next iterations in src/iterations.py or run final",
+  "updated": "2026-11-08T19:52:56",
+  "test_unsealed_at": "2026-11-08T19:49:38",
+  "test_results": {
+    "initial": {
+      "checkpoint": "checkpoints/wsp-003/iter000_initial.pt",
+      "n": 6000,
+      "accuracy": 0.6071666666666666,
+      "precision": 0.6108238538435022,
+      "recall": 0.5906666666666667,
+      "f1": 0.6005761735299102,
+      "confusion": {
+        "tp": 1772,
+        "fp": 1129,
+        "tn": 1871,
+        "fn": 1228
+      },
+      "bce_loss_metric": 0.7996630668640137,
+      "mean_signed_margin": 0.5254219174385071,
+      "accuracy_ci95": [
+        0.5947,
+        0.6195
+      ]
+    },
+    "final": {
+      "checkpoint": "checkpoints/wsp-003/iter013.pt",
+      "n": 6000,
+      "accuracy": 0.7713333333333333,
+      "precision": 0.7874293785310734,
+      "recall": 0.7433333333333333,
+      "f1": 0.7647462277091907,
+      "confusion": {
+        "tp": 2230,
+        "fp": 602,
+        "tn": 2398,
+        "fn": 770
+      },
+      "bce_loss_metric": 0.49907904863357544,
+      "mean_signed_margin": 1.1604539155960083,
+      "accuracy_ci95": [
+        0.7605,
+        0.7818
+      ]
+    },
+    "paired": {
+      "n": 6000,
+      "final_right_initial_wrong": 1532,
+      "initial_right_final_wrong": 547,
+      "mcnemar_exact_p_two_sided": 1.8755729322279513e-107
+    }
+  },
+  "test_time": "2026-11-08T19:49:46"
+}

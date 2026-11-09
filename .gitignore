@@ -1,0 +1,28 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Data, weights, logs (large / not for git)
+dataset/raw/*
+dataset/processed/*
+checkpoints/*
+logs/*
+!**/.gitkeep
+
+# Secrets
+.env
+.env.*
+
+# Dataset images (2 GB, not for git; includes sealed test splits)
+dataset/
+
+# Local tooling
+.archify/
+.DS_Store

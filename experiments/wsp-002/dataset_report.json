@@ -1,0 +1,104 @@
+{
+  "counts": {
+    "train": {
+      "cat": 500,
+      "dog": 500
+    },
+    "val": {
+      "cat": 300,
+      "dog": 300
+    },
+    "test": {
+      "cat": 1000,
+      "dog": 1000
+    }
+  },
+  "rejects_by_reason": {
+    "cat": {
+      "not_jpeg": 94,
+      "too_small_image": 78,
+      "exact_duplicate_or_wsp001": 27,
+      "too_small_file": 3
+    },
+    "dog": {
+      "exact_duplicate_or_wsp001": 19,
+      "too_small_image": 80,
+      "not_jpeg": 135,
+      "too_small_file": 2
+    }
+  },
+  "near_duplicates_removed": {
+    "cat": 35,
+    "dog": 27
+  },
+  "content": {
+    "train_cat": {
+      "n": 500,
+      "mean_width": 413.7,
+      "mean_height": 356.0,
+      "min_side": 112,
+      "max_side": 500,
+      "brightness": 116.0,
+      "contrast": 54.8,
+      "edge_density": 10.2,
+      "warmth_r_minus_b": 19.7,
+      "brightness_range": [
+        43.6,
+        206.5
+      ]
+    },
+    "train_dog": {
+      "n": 500,
+      "mean_width": 400.5,
+      "mean_height": 359.8,
+      "min_side": 112,
+      "max_side": 500,
+      "brightness": 120.6,
+      "contrast": 53.8,
+      "edge_density": 11.5,
+      "warmth_r_minus_b": 17.6,
+      "brightness_range": [
+        52.2,
+        206.4
+      ]
+    },
+    "val_cat": {
+      "n": 300,
+      "mean_width": 414.8,
+      "mean_height": 363.8,
+      "min_side": 123,
+      "max_side": 500,
+      "brightness": 115.5,
+      "contrast": 55.0,
+      "edge_density": 10.4,
+      "warmth_r_minus_b": 17.4,
+      "brightness_range": [
+        26.1,
+        193.6
+      ]
+    },
+    "val_dog": {
+      "n": 300,
+      "mean_width": 401.4,
+      "mean_height": 363.6,
+      "min_side": 105,
+      "max_side": 500,
+      "brightness": 118.1,
+      "contrast": 51.5,
+      "edge_density": 11.0,
+      "warmth_r_minus_b": 18.6,
+      "brightness_range": [
+        32.4,
+        221.4
+      ]
+    }
+  },
+  "zip_sha256": "b7974bd00a84a99921f36ee4403f089853777b5ae8d151c76a86e64900334af9",
+  "seed": 2,
+  "per_class": {
+    "train": 500,
+    "val": 300,
+    "test": 1000
+  },
+  "total": 3600
+}

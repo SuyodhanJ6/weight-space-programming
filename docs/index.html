@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WSP: Weight-Space Programming</title>
+<style>
+  :root { --bg:#0f1420; --card:#171e2e; --line:#2a3550; --text:#e6ebf5; --mute:#9aa7c0; --acc:#4cc9f0; --warn:#f4a261; }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#f5f7fb; --card:#fff; --line:#d9e0ee; --text:#18202f; --mute:#566177; --acc:#0b7aa8; --warn:#b4570f; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif; }
+  main { max-width:1100px; margin:0 auto; padding:32px 16px 64px; }
+  h1 { margin:0 0 4px; font-size:1.9rem; }
+  .sub { color:var(--mute); margin:0 0 24px; }
+  h2 { font-size:1.1rem; margin:32px 0 12px; color:var(--acc); text-transform:uppercase; letter-spacing:.06em; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; }
+  a.card, .card { display:block; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; color:inherit; text-decoration:none; }
+  a.card:hover { border-color:var(--acc); }
+  .card b { display:block; margin-bottom:4px; }
+  .card span { color:var(--mute); font-size:.9rem; }
+  .stat b { font-size:1.5rem; color:var(--acc); }
+  iframe { width:100%; height:640px; border:1px solid var(--line); border-radius:10px; background:var(--card); }
+  .note { border-left:3px solid var(--warn); padding:6px 12px; color:var(--mute); margin-top:24px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Weight-Space Programming (WSP)</h1>
+  <p class="sub">Can an LLM agent build and improve a cat-vs-dog classifier by reasoning about and editing weights directly, with no gradient training?</p>
+
+  <h2>Results at a glance</h2>
+  <div class="grid">
+    <div class="card stat"><b>60.7% → 77.1%</b><span>WSP-003, 6,000 unseen test images</span></div>
+    <div class="card stat"><b>78.0%</b><span>WSP-004 wide net, 3,884 fresh images</span></div>
+    <div class="card stat"><b>~85%</b><span>of the WSP-003 gain came from the closed-form data-fitted head</span></div>
+    <div class="card stat"><b>4 / 4</b><span>automated audits passed, hash-exact replay</span></div>
+  </div>
+
+  <h2>End-to-end flow</h2>
+  <iframe src="wsp-end-to-end-flow.html" title="WSP end-to-end flow diagram" loading="lazy"></iframe>
+  <p class="sub"><a href="wsp-end-to-end-flow.html" style="color:var(--acc)">Open the diagram full screen</a></p>
+
+  <h2>Research record</h2>
+  <div class="grid">
+    <a class="card" href="wsp-research-record/README.md"><b>README</b><span>Short answer, inventory, reading guide</span></a>
+    <a class="card" href="wsp-research-record/01_HOW_THE_EXPERIMENT_WAS_DONE.md"><b>01 How it was done</b><span>Method, data, network, engine, statistics</span></a>
+    <a class="card" href="wsp-research-record/02_OBSERVATIONS.md"><b>02 Observations</b><span>Every finding, with numbers</span></a>
+    <a class="card" href="wsp-research-record/03_AUDIT_RECORD.md"><b>03 Audit record</b><span>What was checked and how</span></a>
+    <a class="card" href="wsp-research-record/04_RESULTS_SUMMARY.md"><b>04 Results summary</b><span>Generated tables</span></a>
+    <a class="card" href="wsp-research-record/05_ITERATION_LEDGER.md"><b>05 Iteration ledger</b><span>All 60 iterations</span></a>
+    <a class="card" href="wsp-research-record/06_DEVIATIONS_MISTAKES_AND_DISCLOSURES.md"><b>06 Deviations and mistakes</b><span>The honest list</span></a>
+    <a class="card" href="wsp-research-record/07_FILE_MAP.md"><b>07 File map</b><span>Where everything lives</span></a>
+  </div>
+
+  <h2>Final reports</h2>
+  <div class="grid">
+    <a class="card" href="../reports/FINAL_REPORT.md"><b>WSP-001</b><span>20 images, not statistically meaningful</span></a>
+    <a class="card" href="../reports/WSP_002_FINAL_REPORT.md"><b>WSP-002</b><span>3.6k images, no real gain</span></a>
+    <a class="card" href="../reports/WSP_003_FINAL_REPORT.md"><b>WSP-003</b><span>17k images, +16.4 pt</span></a>
+    <a class="card" href="../reports/WSP_004_FINAL_REPORT.md"><b>WSP-004</b><span>Wide network, fresh test set</span></a>
+  </div>
+
+  <p class="note">Limits: one dataset, 64×64 input, one split seed per experiment. 100% accuracy is not reachable with this approach. Hand-written edits and the data-fitted head are reported separately.</p>
+</main>
+</body>
+</html>

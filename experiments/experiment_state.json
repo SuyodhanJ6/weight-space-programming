@@ -1,0 +1,183 @@
+{
+  "experiment_id": "wsp-001",
+  "status": "complete",
+  "architecture": "CatDogNet: conv5x5(3->16)-pool-conv3x3(16->32)-pool-conv3x3(32->32)-avgpool4x4-linear(512->1)",
+  "iteration": 9,
+  "last_completed": "iter009",
+  "completed_ids": [
+    "iter000",
+    "iter001",
+    "iter002",
+    "iter003",
+    "iter004",
+    "iter005",
+    "iter006",
+    "iter007",
+    "iter008",
+    "iter009"
+  ],
+  "accepted_ids": [
+    "iter000",
+    "iter002",
+    "iter004"
+  ],
+  "rejected_ids": [
+    "iter001",
+    "iter003",
+    "iter005",
+    "iter006",
+    "iter007",
+    "iter008",
+    "iter009"
+  ],
+  "baseline_checkpoint": "checkpoints/iter000_initial.pt",
+  "baseline_sha256": "e1444a51752ba7373bc1fcc7815da9bf884b4a50699c0fa31e370d51b8084d41",
+  "accepted_checkpoint": "checkpoints/iter004.pt",
+  "accepted_sha256": "85fc0fee345e8d4dde08e1d281b2da03119071daa70df89108ffab4d7138fe4b",
+  "head_cfg": {
+    "rule": "lda",
+    "cell_mask": null
+  },
+  "metrics": {
+    "train_acc": 0.9167,
+    "val_acc": 1.0,
+    "val_margin": 0.6608,
+    "loo_acc": 0.875,
+    "loo_margin": 1.1485
+  },
+  "baseline_metrics": {
+    "train_acc": 0.9167,
+    "val_acc": 0.75,
+    "val_margin": 0.011,
+    "loo_acc": 0.8125,
+    "loo_margin": 1.0206
+  },
+  "splits": {
+    "train": [
+      "cat_08.jpg",
+      "cat_09.jpg",
+      "cat_02.jpg",
+      "cat_06.jpg",
+      "cat_04.jpg",
+      "cat_05.jpg",
+      "dog_10.jpg",
+      "dog_05.jpg",
+      "dog_09.jpg",
+      "dog_07.jpg",
+      "dog_01.jpg",
+      "dog_02.jpg"
+    ],
+    "val": [
+      "cat_03.jpg",
+      "cat_01.jpg",
+      "dog_08.jpg",
+      "dog_03.jpg"
+    ],
+    "test": [
+      "cat_10.jpg",
+      "cat_07.jpg",
+      "dog_04.jpg",
+      "dog_06.jpg"
+    ]
+  },
+  "manifest": "experiments/manifest.json",
+  "test_evaluated": true,
+  "acceptance_rule": "Accept iff NO regression on val accuracy AND NO regression on LOO accuracy (train+val, 16 images, head refit per fold) AND at least one of: val accuracy up by >=1 image (0.25), LOO accuracy up by >=1 image (0.0625), or (both accuracies unchanged and) val margin up by >=0.25 with LOO margin not down by >0.10. Train accuracy is recorded but never used to accept. Test split is never read during iterations.",
+  "next_action": "write next iterations in src/iterations.py or run final",
+  "updated": "2026-11-08T19:02:43",
+  "test_results": {
+    "initial": {
+      "checkpoint": "checkpoints/iter000_initial.pt",
+      "n": 4,
+      "accuracy": 0.5,
+      "precision": 0.5,
+      "recall": 0.5,
+      "f1": 0.5,
+      "confusion": {
+        "tp": 1,
+        "fp": 1,
+        "tn": 1,
+        "fn": 1
+      },
+      "bce_loss_metric": 0.9366936683654785,
+      "mean_signed_margin": 0.4509733319282532,
+      "per_image": [
+        {
+          "name": "cat_10.jpg",
+          "label": 0,
+          "logit": -2.0954,
+          "p_dog": 0.1095,
+          "correct": true
+        },
+        {
+          "name": "cat_07.jpg",
+          "label": 0,
+          "logit": 1.7276,
+          "p_dog": 0.8491,
+          "correct": false
+        },
+        {
+          "name": "dog_04.jpg",
+          "label": 1,
+          "logit": 2.9184,
+          "p_dog": 0.9487,
+          "correct": true
+        },
+        {
+          "name": "dog_06.jpg",
+          "label": 1,
+          "logit": -1.4823,
+          "p_dog": 0.1851,
+          "correct": false
+        }
+      ]
+    },
+    "final": {
+      "checkpoint": "checkpoints/iter004.pt",
+      "n": 4,
+      "accuracy": 0.75,
+      "precision": 0.6666666666666666,
+      "recall": 1.0,
+      "f1": 0.8,
+      "confusion": {
+        "tp": 2,
+        "fp": 1,
+        "tn": 1,
+        "fn": 0
+      },
+      "bce_loss_metric": 0.4933980703353882,
+      "mean_signed_margin": 0.6914154291152954,
+      "per_image": [
+        {
+          "name": "cat_10.jpg",
+          "label": 0,
+          "logit": -2.1004,
+          "p_dog": 0.1091,
+          "correct": true
+        },
+        {
+          "name": "cat_07.jpg",
+          "label": 0,
+          "logit": 0.3621,
+          "p_dog": 0.5895,
+          "correct": false
+        },
+        {
+          "name": "dog_04.jpg",
+          "label": 1,
+          "logit": 0.8708,
+          "p_dog": 0.7049,
+          "correct": true
+        },
+        {
+          "name": "dog_06.jpg",
+          "label": 1,
+          "logit": 0.1565,
+          "p_dog": 0.539,
+          "correct": true
+        }
+      ]
+    }
+  },
+  "test_time": "2026-11-08T19:04:31"
+}

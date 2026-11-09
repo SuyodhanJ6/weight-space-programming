@@ -1,0 +1,499 @@
+{
+  "report": {
+    "counts": {
+      "cat": 10,
+      "dog": 10
+    },
+    "corrupted": [],
+    "formats": [
+      "JPEG"
+    ],
+    "modes": [
+      "RGB"
+    ],
+    "duplicates": {
+      "exact": [],
+      "near": []
+    },
+    "cat_summary": {
+      "n": 10,
+      "mean_brightness": 95.2,
+      "mean_contrast": 55.6,
+      "mean_edge_density": 9.7,
+      "mean_warmth_r_minus_b": 13.4,
+      "mean_width": 448.8,
+      "mean_height": 402.6
+    },
+    "dog_summary": {
+      "n": 10,
+      "mean_brightness": 117.0,
+      "mean_contrast": 54.3,
+      "mean_edge_density": 11.4,
+      "mean_warmth_r_minus_b": 27.5,
+      "mean_width": 402.2,
+      "mean_height": 407.0
+    }
+  },
+  "images": [
+    {
+      "path": "experiments/pilot20/cat_01.jpg",
+      "label": 0,
+      "sha256": "84e6c6f72963c53af66763ebe947e622362006f5d9feaf9b480d3cd4533ef94b",
+      "bytes": 25638,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 397,
+      "height": 500,
+      "corrupted": false,
+      "dhash": 1028825259330379414,
+      "mean_rgb": [
+        121.8,
+        111.4,
+        96.0
+      ],
+      "brightness": 112.7,
+      "contrast": 47.7,
+      "edge_density": 9.56,
+      "warmth_r_minus_b": 25.7,
+      "split": "val"
+    },
+    {
+      "path": "experiments/pilot20/cat_02.jpg",
+      "label": 0,
+      "sha256": "8e6e5c829763483ee3fdc0c92cf2d0117d502d4206473102d48019ce25e37323",
+      "bytes": 29684,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 500,
+      "height": 425,
+      "corrupted": false,
+      "dhash": 18008996397538980759,
+      "mean_rgb": [
+        97.4,
+        85.8,
+        82.6
+      ],
+      "brightness": 88.9,
+      "contrast": 52.0,
+      "edge_density": 10.85,
+      "warmth_r_minus_b": 14.8,
+      "split": "train"
+    },
+    {
+      "path": "experiments/pilot20/cat_03.jpg",
+      "label": 0,
+      "sha256": "34528357322456f5489e6bb089f4e09838f69c1ccc1881ace2175302cd3aa863",
+      "bytes": 20735,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 500,
+      "height": 304,
+      "corrupted": false,
+      "dhash": 7481830061279076833,
+      "mean_rgb": [
+        143.4,
+        141.2,
+        125.8
+      ],
+      "brightness": 140.1,
+      "contrast": 57.9,
+      "edge_density": 10.68,
+      "warmth_r_minus_b": 17.6,
+      "split": "val"
+    },
+    {
+      "path": "experiments/pilot20/cat_04.jpg",
+      "label": 0,
+      "sha256": "ea1422dec44e9adbad9e8d72623467a8b2dd98a64a75c3aa0c10fd546cd1f269",
+      "bytes": 21813,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 440,
+      "height": 500,
+      "corrupted": false,
+      "dhash": 476494069210736508,
+      "mean_rgb": [
+        57.7,
+        61.6,
+        61.2
+      ],
+      "brightness": 60.4,
+      "contrast": 34.0,
+      "edge_density": 5.45,
+      "warmth_r_minus_b": -3.5,
+      "split": "train"
+    },
+    {
+      "path": "experiments/pilot20/cat_05.jpg",
+      "label": 0,
+      "sha256": "4d30684c0e88434545c7b128d31750e070789a8c6da247f110bd97b4e9fe7c7f",
+      "bytes": 17602,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 350,
+      "height": 262,
+      "corrupted": false,
+      "dhash": 2825770461236620735,
+      "mean_rgb": [
+        128.7,
+        123.6,
+        116.5
+      ],
+      "brightness": 124.3,
+      "contrast": 48.1,
+      "edge_density": 12.54,
+      "warmth_r_minus_b": 12.2,
+      "split": "train"
+    },
+    {
+      "path": "experiments/pilot20/cat_06.jpg",
+      "label": 0,
+      "sha256": "c6d4d0d8aefdcb012fb6d01b3c84c44c2c734a4279abbf65b07fa6b986f3fc57",
+      "bytes": 14785,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 448,
+      "height": 336,
+      "corrupted": false,
+      "dhash": 943814018350516252,
+      "mean_rgb": [
+        99.0,
+        90.7,
+        92.8
+      ],
+      "brightness": 93.4,
+      "contrast": 60.4,
+      "edge_density": 5.34,
+      "warmth_r_minus_b": 6.2,
+      "split": "train"
+    },
+    {
+      "path": "experiments/pilot20/cat_07.jpg",
+      "label": 0,
+      "sha256": "73da2ac34c3d04b1c525ccdf211072dba5cb01d563c2642de79888d3a9ae5de7",
+      "bytes": 44380,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 500,
+      "height": 472,
+      "corrupted": false,
+      "dhash": 11042593310594863507,
+      "mean_rgb": [
+        86.4,
+        83.6,
+        71.1
+      ],
+      "brightness": 83.0,
+      "contrast": 61.0,
+      "edge_density": 15.95,
+      "warmth_r_minus_b": 15.3,
+      "split": "test"
+    },
+    {
+      "path": "experiments/pilot20/cat_08.jpg",
+      "label": 0,
+      "sha256": "6fc03bdbd7b3929c1759aa210f8fe14568862eeb2a7eaabaa4eab850d31a9fb4",
+      "bytes": 25922,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 500,
+      "height": 375,
+      "corrupted": false,
+      "dhash": 18414960704823461767,
+      "mean_rgb": [
+        110.1,
+        97.1,
+        68.0
+      ],
+      "brightness": 97.7,
+      "contrast": 65.4,
+      "edge_density": 7.56,
+      "warmth_r_minus_b": 42.0,
+      "split": "train"
+    },
+    {
+      "path": "experiments/pilot20/cat_09.jpg",
+      "label": 0,
+      "sha256": "822ae25a3d97c3b6ac412e9b1246a6cdff4a6f2bc27e4afce124e8b7536055ef",
+      "bytes": 22590,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 500,
+      "height": 352,
+      "corrupted": false,
+      "dhash": 1057549008498147131,
+      "mean_rgb": [
+        64.2,
+        71.9,
+        79.6
+      ],
+      "brightness": 70.4,
+      "contrast": 67.6,
+      "edge_density": 12.21,
+      "warmth_r_minus_b": -15.4,
+      "split": "train"
+    },
+    {
+      "path": "experiments/pilot20/cat_10.jpg",
+      "label": 0,
+      "sha256": "98bcd2d9995177883d5e6fde04ddb7ac7174d20bbf6a3dc32eb92dc748d4e774",
+      "bytes": 18022,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 353,
+      "height": 500,
+      "corrupted": false,
+      "dhash": 1445109087784605199,
+      "mean_rgb": [
+        93.7,
+        76.0,
+        75.0
+      ],
+      "brightness": 81.2,
+      "contrast": 61.6,
+      "edge_density": 7.03,
+      "warmth_r_minus_b": 18.7,
+      "split": "test"
+    },
+    {
+      "path": "experiments/pilot20/dog_01.jpg",
+      "label": 1,
+      "sha256": "eec02e6a237cc46b3b38a7cc1c743880d804cf4bcea3cb6f95e0dd780883bbf5",
+      "bytes": 26295,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 459,
+      "height": 500,
+      "corrupted": false,
+      "dhash": 7197299696844177271,
+      "mean_rgb": [
+        148.7,
+        152.3,
+        155.0
+      ],
+      "brightness": 151.5,
+      "contrast": 51.1,
+      "edge_density": 9.17,
+      "warmth_r_minus_b": -6.3,
+      "split": "train"
+    },
+    {
+      "path": "experiments/pilot20/dog_02.jpg",
+      "label": 1,
+      "sha256": "912b184507187fd873614ed75f0097d566a5b3f38ce74279c629ff465b2fa319",
+      "bytes": 30419,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 359,
+      "height": 500,
+      "corrupted": false,
+      "dhash": 3173778272884317373,
+      "mean_rgb": [
+        112.2,
+        82.4,
+        68.6
+      ],
+      "brightness": 89.7,
+      "contrast": 61.8,
+      "edge_density": 12.9,
+      "warmth_r_minus_b": 43.7,
+      "split": "train"
+    },
+    {
+      "path": "experiments/pilot20/dog_03.jpg",
+      "label": 1,
+      "sha256": "df5fb94f9f01537808c783515adb0d59fe90217fd125735a46072581c78295f4",
+      "bytes": 29765,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 395,
+      "height": 500,
+      "corrupted": false,
+      "dhash": 17397582265484481685,
+      "mean_rgb": [
+        172.9,
+        145.8,
+        119.8
+      ],
+      "brightness": 150.9,
+      "contrast": 30.4,
+      "edge_density": 6.27,
+      "warmth_r_minus_b": 53.1,
+      "split": "val"
+    },
+    {
+      "path": "experiments/pilot20/dog_04.jpg",
+      "label": 1,
+      "sha256": "81684b2392b1701fab81d69a5d6c86962ab19afec8169f27646443443b6db0fb",
+      "bytes": 15124,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 259,
+      "height": 237,
+      "corrupted": false,
+      "dhash": 5436745469874344216,
+      "mean_rgb": [
+        91.8,
+        92.0,
+        84.8
+      ],
+      "brightness": 91.1,
+      "contrast": 63.6,
+      "edge_density": 14.88,
+      "warmth_r_minus_b": 7.1,
+      "split": "test"
+    },
+    {
+      "path": "experiments/pilot20/dog_05.jpg",
+      "label": 1,
+      "sha256": "93722afd0794297b10900402052123c8e8aad1421bd9bae8e81ca455edf6e53e",
+      "bytes": 50159,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 314,
+      "height": 352,
+      "corrupted": false,
+      "dhash": 14106139498952600999,
+      "mean_rgb": [
+        136.0,
+        101.6,
+        72.8
+      ],
+      "brightness": 108.6,
+      "contrast": 54.4,
+      "edge_density": 13.95,
+      "warmth_r_minus_b": 63.2,
+      "split": "train"
+    },
+    {
+      "path": "experiments/pilot20/dog_06.jpg",
+      "label": 1,
+      "sha256": "b8d3506a44005b3993c3291f5a405529d20a9cb61d46e744d41964262d78920c",
+      "bytes": 18928,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 500,
+      "height": 463,
+      "corrupted": false,
+      "dhash": 17577809298771079107,
+      "mean_rgb": [
+        101.9,
+        84.5,
+        55.4
+      ],
+      "brightness": 86.4,
+      "contrast": 61.4,
+      "edge_density": 7.72,
+      "warmth_r_minus_b": 46.5,
+      "split": "test"
+    },
+    {
+      "path": "experiments/pilot20/dog_07.jpg",
+      "label": 1,
+      "sha256": "c8f25d72ed5cbacc6510e220f7b164e7f1392fd7bfb7da8417732845e5d3fc36",
+      "bytes": 95070,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 336,
+      "height": 432,
+      "corrupted": false,
+      "dhash": 3811154661669891177,
+      "mean_rgb": [
+        131.0,
+        141.8,
+        107.1
+      ],
+      "brightness": 134.6,
+      "contrast": 58.8,
+      "edge_density": 13.33,
+      "warmth_r_minus_b": 23.9,
+      "split": "train"
+    },
+    {
+      "path": "experiments/pilot20/dog_08.jpg",
+      "label": 1,
+      "sha256": "c7ea728641e4622e145021498ee7fe109e68dd04d6434e3ae25320d7440acb5c",
+      "bytes": 28183,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 400,
+      "height": 313,
+      "corrupted": false,
+      "dhash": 17354857450671610526,
+      "mean_rgb": [
+        128.4,
+        104.9,
+        78.0
+      ],
+      "brightness": 108.9,
+      "contrast": 42.1,
+      "edge_density": 11.68,
+      "warmth_r_minus_b": 50.4,
+      "split": "val"
+    },
+    {
+      "path": "experiments/pilot20/dog_09.jpg",
+      "label": 1,
+      "sha256": "f1dd5e0f9c40ecbc988647b05b12531322ba551106ab2774ad56276b3323060d",
+      "bytes": 24425,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 500,
+      "height": 375,
+      "corrupted": false,
+      "dhash": 15267982168251427707,
+      "mean_rgb": [
+        62.6,
+        61.2,
+        51.4
+      ],
+      "brightness": 60.5,
+      "contrast": 32.9,
+      "edge_density": 7.6,
+      "warmth_r_minus_b": 11.2,
+      "split": "train"
+    },
+    {
+      "path": "experiments/pilot20/dog_10.jpg",
+      "label": 1,
+      "sha256": "06bc8172304a22d07ed6ad6132540f60f36393b0359fd17039345cbe5d180ebb",
+      "bytes": 38243,
+      "format": "JPEG",
+      "mode": "RGB",
+      "channels": 3,
+      "width": 500,
+      "height": 398,
+      "corrupted": false,
+      "dhash": 17933863620425310296,
+      "mean_rgb": [
+        178.6,
+        190.0,
+        196.1
+      ],
+      "brightness": 187.3,
+      "contrast": 86.4,
+      "edge_density": 16.47,
+      "warmth_r_minus_b": -17.5,
+      "split": "train"
+    }
+  ]
+}

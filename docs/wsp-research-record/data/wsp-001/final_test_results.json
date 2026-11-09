@@ -1,0 +1,94 @@
+{
+  "initial": {
+    "checkpoint": "checkpoints/iter000_initial.pt",
+    "n": 4,
+    "accuracy": 0.5,
+    "precision": 0.5,
+    "recall": 0.5,
+    "f1": 0.5,
+    "confusion": {
+      "tp": 1,
+      "fp": 1,
+      "tn": 1,
+      "fn": 1
+    },
+    "bce_loss_metric": 0.9366936683654785,
+    "mean_signed_margin": 0.4509733319282532,
+    "per_image": [
+      {
+        "name": "cat_10.jpg",
+        "label": 0,
+        "logit": -2.0954,
+        "p_dog": 0.1095,
+        "correct": true
+      },
+      {
+        "name": "cat_07.jpg",
+        "label": 0,
+        "logit": 1.7276,
+        "p_dog": 0.8491,
+        "correct": false
+      },
+      {
+        "name": "dog_04.jpg",
+        "label": 1,
+        "logit": 2.9184,
+        "p_dog": 0.9487,
+        "correct": true
+      },
+      {
+        "name": "dog_06.jpg",
+        "label": 1,
+        "logit": -1.4823,
+        "p_dog": 0.1851,
+        "correct": false
+      }
+    ]
+  },
+  "final": {
+    "checkpoint": "checkpoints/iter004.pt",
+    "n": 4,
+    "accuracy": 0.75,
+    "precision": 0.6666666666666666,
+    "recall": 1.0,
+    "f1": 0.8,
+    "confusion": {
+      "tp": 2,
+      "fp": 1,
+      "tn": 1,
+      "fn": 0
+    },
+    "bce_loss_metric": 0.4933980703353882,
+    "mean_signed_margin": 0.6914154291152954,
+    "per_image": [
+      {
+        "name": "cat_10.jpg",
+        "label": 0,
+        "logit": -2.1004,
+        "p_dog": 0.1091,
+        "correct": true
+      },
+      {
+        "name": "cat_07.jpg",
+        "label": 0,
+        "logit": 0.3621,
+        "p_dog": 0.5895,
+        "correct": false
+      },
+      {
+        "name": "dog_04.jpg",
+        "label": 1,
+        "logit": 0.8708,
+        "p_dog": 0.7049,
+        "correct": true
+      },
+      {
+        "name": "dog_06.jpg",
+        "label": 1,
+        "logit": 0.1565,
+        "p_dog": 0.539,
+        "correct": true
+      }
+    ]
+  }
+}

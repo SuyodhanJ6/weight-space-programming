@@ -1,0 +1,534 @@
+[
+  {
+    "id": "iter000",
+    "title": "hand-programmed baseline",
+    "decision": "baseline",
+    "metrics": {
+      "train_acc": 0.795,
+      "val_acc": 0.7843,
+      "val_f1": 0.7774,
+      "val_margin": 1.185,
+      "cv_acc": 0.7765,
+      "cv_margin": 1.1733
+    },
+    "checkpoint": "checkpoints/wsp-004/iter000_initial.pt"
+  },
+  {
+    "id": "iter001",
+    "title": "Local-peakiness channels replace the coarse box copies (48 channels)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-004/iter000_initial.pt",
+    "observed": "WSP-004 baseline (hand-written 48-filter conv1, fine+coarse passthrough, full-covariance head): train 0.795, val 0.784, CV 0.777. Ablation: fine-only 0.781, coarse-only 0.778 (coarse copies add ~0.3 pt); odd Gabors most valuable (drop -> 0.768); coarse-freq Gabors, DoG, colour, hue each add <=0.4 pt.",
+    "problem": "Coarse copies are near-linear functions of the fine features: only ~0.3 pt of new information for 768 extra head features (variance cost).",
+    "hypothesis": "ReLU(f - 3x3 box mean of f) per conv1 map measures how much a feature stands out from its surroundings (nonlinear, not available linearly) and raises val accuracy by >=1 point over 0.7843. (WSP-003: peaks gave +0.7 on the 16-map net.)",
+    "selected": "conv2.weight[48:96] (48x48x3x3 = 20,736) + head refit (1,537, lda_full)",
+    "expected": "Gain if local peakiness is informative; fewer redundant features.",
+    "risks": "Loses coarse marginals (+0.3 pt).",
+    "started": "20:04:59",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val -0.0040, cv -0.0053, val_f1 -0.0058)",
+    "previous_metrics": {
+      "train_acc": 0.795,
+      "val_acc": 0.7843,
+      "val_f1": 0.7774,
+      "val_margin": 1.185,
+      "cv_acc": 0.7765,
+      "cv_margin": 1.1733
+    },
+    "new_metrics": {
+      "train_acc": 0.791,
+      "val_acc": 0.7803,
+      "val_f1": 0.7716,
+      "val_margin": 1.1704,
+      "cv_acc": 0.7712,
+      "cv_margin": 1.157
+    },
+    "head_cfg": {
+      "rule": "lda_full",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv2.weight": {
+        "changed": 20736,
+        "total": 41472,
+        "max_abs_delta": 0.7777777910232544,
+        "l2_delta": 17.281978607177734
+      },
+      "head.weight": {
+        "changed": 1536,
+        "total": 1536,
+        "max_abs_delta": 1.6928132772445679,
+        "l2_delta": 16.29690170288086
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.11068189144134521,
+        "l2_delta": 0.11068189144134521
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(slice(48, 96, None), slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv2 ch 48-95: local peakiness ReLU(f_j - 3x3 box mean) replaces the coarse box copies",
+        "n_changed": 20736,
+        "sample_old": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ],
+        "sample_new": [
+          -0.111111,
+          -0.111111,
+          -0.111111,
+          -0.111111,
+          0.888889,
+          -0.111111,
+          -0.111111,
+          -0.111111
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1536,
+        "sample_old": [
+          -0.044535,
+          0.471597,
+          -0.001556,
+          -0.450451,
+          0.429037,
+          0.24422,
+          -0.118568,
+          -0.216355
+        ],
+        "sample_new": [
+          -0.051965,
+          0.70659,
+          0.045335,
+          -0.391001,
+          0.501136,
+          0.301644,
+          -0.414704,
+          0.069299
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -1.683412
+        ],
+        "sample_new": [
+          -1.794094
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-004/iter001.pt",
+      "sha256": "917a9669be50c410a6484239c4e5c89c425831b487831fd3f3081211b27f797c"
+    },
+    "full_diff_file": "experiments/wsp-004/param_changes/iter001.pt",
+    "notes": [],
+    "n_changed_parameters": 22273,
+    "prev_n_wrong_val": 647,
+    "new_n_wrong_val": 659,
+    "new_n_wrong_cv": 1830
+  },
+  {
+    "id": "iter002",
+    "title": "Soft-AND conjunction channels replace the coarse box copies (48 channels)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-004/iter000_initial.pt",
+    "observed": "WSP-004 baseline (hand-written 48-filter conv1, fine+coarse passthrough, full-covariance head): train 0.795, val 0.784, CV 0.777. Ablation: fine-only 0.781, coarse-only 0.778 (coarse copies add ~0.3 pt); odd Gabors most valuable (drop -> 0.768); coarse-freq Gabors, DoG, colour, hue each add <=0.4 pt. WSP-003: colour x orientation conjunctions were accepted under the diagonal head.",
+    "problem": "Fine marginals cannot express co-occurrence (colour with orientation; neighbouring orientations).",
+    "hypothesis": "48 conjunction channels (4 colour axes x 8 even orientations, 8 corner pairs k/k+45deg, 8 odd-phase junction pairs k/k+90deg) add nonlinear information and raise val accuracy by >=1 point.",
+    "selected": "conv2.weight+bias[48:96] (20,736+48) + head refit (1,537, lda_full)",
+    "expected": "Gain if co-occurrence is informative.",
+    "risks": "Scale constants are train-derived; scene-context colour cues.",
+    "started": "20:06:14",
+    "decision": "rejected",
+    "decision_reason": "diagnostic regression (cv -0.0119, val_f1 -0.0167)",
+    "previous_metrics": {
+      "train_acc": 0.795,
+      "val_acc": 0.7843,
+      "val_f1": 0.7774,
+      "val_margin": 1.185,
+      "cv_acc": 0.7765,
+      "cv_margin": 1.1733
+    },
+    "new_metrics": {
+      "train_acc": 0.7774,
+      "val_acc": 0.77,
+      "val_f1": 0.7607,
+      "val_margin": 1.113,
+      "cv_acc": 0.7646,
+      "cv_margin": 1.1155
+    },
+    "head_cfg": {
+      "rule": "lda_full",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv2.weight": {
+        "changed": 520,
+        "total": 41472,
+        "max_abs_delta": 19.831634521484375,
+        "l2_delta": 141.21206665039062
+      },
+      "conv2.bias": {
+        "changed": 48,
+        "total": 96,
+        "max_abs_delta": 2.0,
+        "l2_delta": 13.856406211853027
+      },
+      "head.weight": {
+        "changed": 1536,
+        "total": 1536,
+        "max_abs_delta": 1.8438053131103516,
+        "l2_delta": 19.399707794189453
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.32362866401672363,
+        "l2_delta": 0.32362866401672363
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.weight",
+        "selector": "(slice(48, 96, None), slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv2 ch 48-95: soft-AND conjunctions (colour x orientation, corner pairs, junction pairs), train-mean scales",
+        "n_changed": 520,
+        "sample_old": [
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111,
+          0.111111
+        ],
+        "sample_new": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          12.981795,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv2.bias",
+        "selector": "(slice(48, 96, None),)",
+        "reason": "conv2.bias[48:96] = -2.0: ReLU(a/s_a + b/s_b - 2) soft AND",
+        "n_changed": 48,
+        "sample_old": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sample_new": [
+          -2.0,
+          -2.0,
+          -2.0,
+          -2.0,
+          -2.0,
+          -2.0,
+          -2.0,
+          -2.0
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1536,
+        "sample_old": [
+          -0.044535,
+          0.471597,
+          -0.001556,
+          -0.450451,
+          0.429037,
+          0.24422,
+          -0.118568,
+          -0.216355
+        ],
+        "sample_new": [
+          0.030532,
+          0.030673,
+          0.027363,
+          0.023416,
+          0.009938,
+          0.017337,
+          0.01678,
+          0.014301
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -1.683412
+        ],
+        "sample_new": [
+          -1.359783
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-004/iter002.pt",
+      "sha256": "715ddefe63f17032119030a24fc122bb128952ff7f6ba178256e65e2ef2df783"
+    },
+    "full_diff_file": "experiments/wsp-004/param_changes/iter002.pt",
+    "notes": [
+      "train-mean scales for conv1 channels (first 8): [0.077, 0.0635, 0.0604, 0.0619, 0.0744, 0.0618, 0.0604, 0.0634]"
+    ],
+    "n_changed_parameters": 2105,
+    "prev_n_wrong_val": 647,
+    "new_n_wrong_val": 690,
+    "new_n_wrong_cv": 1883
+  },
+  {
+    "id": "iter003",
+    "title": "Coarse-frequency ODD Gabors replace the weakest group (coarse even Gabors)",
+    "status": "completed",
+    "previous_checkpoint": "checkpoints/wsp-004/iter000_initial.pt",
+    "observed": "WSP-004 baseline (hand-written 48-filter conv1, fine+coarse passthrough, full-covariance head): train 0.795, val 0.784, CV 0.777. Ablation: fine-only 0.781, coarse-only 0.778 (coarse copies add ~0.3 pt); odd Gabors most valuable (drop -> 0.768); coarse-freq Gabors, DoG, colour, hue each add <=0.4 pt. iter001/002 (nonlinear replacements of the coarse copies) both regressed.",
+    "problem": "The 4 coarse-frequency EVEN Gabors are the weakest group (dropping them: val 0.787, +0.3), while odd-phase (step-edge) filters are the most valuable (dropping them: val 0.768).",
+    "hypothesis": "Replacing those 4 slots with coarse ODD-phase Gabors (orientations 0,2,4,6, wavelength 6) adds edge information and raises val accuracy by >=1 point over 0.7843.",
+    "selected": "conv1.weight[44:48] (4x3x5x5 = 300) + head refit (1,537, lda_full)",
+    "expected": "Gain if coarse step edges are informative.",
+    "risks": "Only 4 orientations at the coarse band.",
+    "started": "20:08:38",
+    "decision": "rejected",
+    "decision_reason": "no meaningful val improvement (val +0.0020, cv +0.0006, val_f1 +0.0032)",
+    "previous_metrics": {
+      "train_acc": 0.795,
+      "val_acc": 0.7843,
+      "val_f1": 0.7774,
+      "val_margin": 1.185,
+      "cv_acc": 0.7765,
+      "cv_margin": 1.1733
+    },
+    "new_metrics": {
+      "train_acc": 0.7985,
+      "val_acc": 0.7863,
+      "val_f1": 0.7806,
+      "val_margin": 1.1915,
+      "cv_acc": 0.7771,
+      "cv_margin": 1.1756
+    },
+    "head_cfg": {
+      "rule": "lda_full",
+      "cell_mask": null
+    },
+    "parameter_diff": {
+      "conv1.weight": {
+        "changed": 300,
+        "total": 3600,
+        "max_abs_delta": 0.06388449668884277,
+        "l2_delta": 0.43972349166870117
+      },
+      "head.weight": {
+        "changed": 1536,
+        "total": 1536,
+        "max_abs_delta": 1.6729302406311035,
+        "l2_delta": 9.782341957092285
+      },
+      "head.bias": {
+        "changed": 1,
+        "total": 1,
+        "max_abs_delta": 0.03639328479766846,
+        "l2_delta": 0.03639328479766846
+      }
+    },
+    "operations": [
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(44, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 filter 44: coarse-frequency (wavelength 6, sigma 2) ODD-phase Gabor at orientation 0",
+        "n_changed": 75,
+        "sample_old": [
+          -0.013021,
+          0.002173,
+          0.013577,
+          0.002173,
+          -0.013021,
+          -0.015837,
+          0.006271,
+          0.022862
+        ],
+        "sample_new": [
+          -0.009285,
+          -0.013509,
+          0.0,
+          0.013509,
+          0.009285,
+          -0.013509,
+          -0.019656,
+          0.0
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(45, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 filter 45: coarse-frequency (wavelength 6, sigma 2) ODD-phase Gabor at orientation 2",
+        "n_changed": 75,
+        "sample_old": [
+          -0.019953,
+          -0.018686,
+          -0.005981,
+          0.005452,
+          0.004538,
+          -0.018686,
+          -0.005462,
+          0.014053
+        ],
+        "sample_new": [
+          -0.002041,
+          -0.013226,
+          -0.018759,
+          -0.011214,
+          0.0,
+          -0.013226,
+          -0.024087,
+          -0.018488
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(46, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 filter 46: coarse-frequency (wavelength 6, sigma 2) ODD-phase Gabor at orientation 4",
+        "n_changed": 75,
+        "sample_old": [
+          -0.013021,
+          -0.015837,
+          -0.017036,
+          -0.015837,
+          -0.013021,
+          0.002173,
+          0.006271,
+          0.008015
+        ],
+        "sample_new": [
+          -0.009285,
+          -0.013509,
+          -0.015308,
+          -0.013509,
+          -0.009285,
+          -0.013509,
+          -0.019656,
+          -0.022273
+        ]
+      },
+      {
+        "op": "modify_parameter_group",
+        "parameter": "conv1.weight",
+        "selector": "(47, slice(None, None, None), slice(None, None, None), slice(None, None, None))",
+        "reason": "conv1 filter 47: coarse-frequency (wavelength 6, sigma 2) ODD-phase Gabor at orientation 6",
+        "n_changed": 75,
+        "sample_old": [
+          0.004538,
+          0.005452,
+          -0.005981,
+          -0.018686,
+          -0.019953,
+          0.005452,
+          0.018328,
+          0.014053
+        ],
+        "sample_new": [
+          0.0,
+          -0.011214,
+          -0.018759,
+          -0.013226,
+          -0.002041,
+          0.011214,
+          0.0,
+          -0.018488
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.weight",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1536,
+        "sample_old": [
+          -0.044535,
+          0.471597,
+          -0.001556,
+          -0.450451,
+          0.429037,
+          0.24422,
+          -0.118568,
+          -0.216355
+        ],
+        "sample_new": [
+          -0.237718,
+          0.367043,
+          -0.097208,
+          -0.602072,
+          0.467102,
+          0.244366,
+          -0.013506,
+          -0.342145
+        ]
+      },
+      {
+        "op": "replace_parameter",
+        "parameter": "head.bias",
+        "selector": "all",
+        "reason": "extractor changed; re-derive head in closed form [closed-form head]",
+        "n_changed": 1,
+        "sample_old": [
+          -1.683412
+        ],
+        "sample_new": [
+          -1.719805
+        ]
+      }
+    ],
+    "candidate_checkpoint": {
+      "path": "checkpoints/wsp-004/iter003.pt",
+      "sha256": "e58e6b9d6621d54391c05095caf1b0138578cf4bf2790e56adf4279c1b14b861"
+    },
+    "full_diff_file": "experiments/wsp-004/param_changes/iter003.pt",
+    "notes": [],
+    "n_changed_parameters": 1837,
+    "prev_n_wrong_val": 647,
+    "new_n_wrong_val": 641,
+    "new_n_wrong_cv": 1783
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "n_val": 600,
+  "baseline_val_acc": 0.5717,
+  "baseline_val_ci95": [
+    0.5317,
+    0.6107
+  ],
+  "final_val_acc": 0.6067,
+  "final_val_ci95": [
+    0.567,
+    0.645
+  ],
+  "paired_final_right_baseline_wrong": 73,
+  "paired_baseline_right_final_wrong": 52,
+  "mcnemar_exact_p_two_sided": 0.07321,
+  "random_conv_features_lda_head_val_acc": {
+    "mean": 0.5771,
+    "std": 0.0176,
+    "min": 0.5533,
+    "max": 0.625
+  },
+  "frac_random_ge_baseline": 0.6,
+  "frac_random_ge_final": 0.1,
+  "label_shuffled_head_on_final_extractor_val_acc": {
+    "mean": 0.5111,
+    "std": 0.0631,
+    "max": 0.61
+  },
+  "frac_shuffle_ge_final": 0.015
+}

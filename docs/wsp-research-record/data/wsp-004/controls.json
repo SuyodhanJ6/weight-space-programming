@@ -1,0 +1,36 @@
+{
+  "n_val": 3000,
+  "baseline_val_acc": 0.7843,
+  "baseline_val_ci95": [
+    0.7693,
+    0.7987
+  ],
+  "final_val_acc": 0.7843,
+  "final_val_ci95": [
+    0.7693,
+    0.7987
+  ],
+  "paired_final_right_baseline_wrong": 0,
+  "paired_baseline_right_final_wrong": 0,
+  "mcnemar_exact_p_two_sided": 1.0,
+  "attribution_val_acc": {
+    "baseline_extractor + diagonal LDA head": 0.6293,
+    "baseline_extractor + lda_full head": 0.7843,
+    "final_extractor + diagonal LDA head": 0.6293,
+    "final_extractor + lda_full head (= final model)": 0.7843
+  },
+  "random_conv_features_same_head_val_acc": {
+    "mean": 0.7498,
+    "std": 0.0029,
+    "min": 0.7463,
+    "max": 0.754
+  },
+  "frac_random_ge_baseline": 0.0,
+  "frac_random_ge_final": 0.0,
+  "label_shuffled_head_on_final_extractor_val_acc": {
+    "mean": 0.4998,
+    "std": 0.0198,
+    "max": 0.553
+  },
+  "frac_shuffle_ge_final": 0.0
+}

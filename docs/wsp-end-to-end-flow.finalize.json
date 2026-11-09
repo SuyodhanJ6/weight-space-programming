@@ -1,0 +1,369 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "workflow",
+  "quality": "showcase",
+  "startedAt": "2026-11-08T15:41:13.434Z",
+  "specification": {
+    "path": "/Users/prashant.malge/Documents/study/noobs/wsp/.archify/workflow-wsp-end-to-end-flow-20261108-211024/candidate.json",
+    "sha256": "e0e13580fe188c800a336c21af041a2977789f845d8f93d2183569b8ec6cfc18",
+    "bytes": 7571
+  },
+  "artifact": {
+    "path": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.html",
+    "sha256": "cd3040148a33e7cbe1814d74532b14ca9796d15c5a9d992b22c69affafbac12b",
+    "bytes": 835726
+  },
+  "stages": {
+    "validate": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": null,
+      "execution": "embedded-in-deliver",
+      "command": [
+        "/opt/homebrew/Cellar/node/25.9.0_3/bin/node",
+        "/Users/prashant.malge/.agents/skills/archify/bin/archify.mjs",
+        "deliver",
+        "workflow",
+        "/Users/prashant.malge/Documents/study/noobs/wsp/.archify/workflow-wsp-end-to-end-flow-20261108-211024/candidate.json",
+        "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.html",
+        "--quality",
+        "showcase",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": true,
+        "command": "validate",
+        "specification": {
+          "sha256": "e0e13580fe188c800a336c21af041a2977789f845d8f93d2183569b8ec6cfc18",
+          "bytes": 7571
+        },
+        "validation": {
+          "checksPassed": 9,
+          "checkCount": 9,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        }
+      }
+    },
+    "deliver": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 445,
+      "command": [
+        "/opt/homebrew/Cellar/node/25.9.0_3/bin/node",
+        "/Users/prashant.malge/.agents/skills/archify/bin/archify.mjs",
+        "deliver",
+        "workflow",
+        "/Users/prashant.malge/Documents/study/noobs/wsp/.archify/workflow-wsp-end-to-end-flow-20261108-211024/candidate.json",
+        "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.html",
+        "--quality",
+        "showcase",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "receiptId": "20bf659b-e49d-40fc-b20f-8718db9d3d4b",
+        "ok": true,
+        "command": "deliver",
+        "type": "workflow",
+        "input": "/Users/prashant.malge/Documents/study/noobs/wsp/.archify/workflow-wsp-end-to-end-flow-20261108-211024/candidate.json",
+        "output": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.html",
+        "specification": {
+          "sha256": "e0e13580fe188c800a336c21af041a2977789f845d8f93d2183569b8ec6cfc18",
+          "bytes": 7571
+        },
+        "artifact": {
+          "sha256": "cd3040148a33e7cbe1814d74532b14ca9796d15c5a9d992b22c69affafbac12b",
+          "bytes": 835726
+        },
+        "validation": {
+          "checksPassed": 9,
+          "checkCount": 9,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        },
+        "update": {
+          "status": "unavailable",
+          "installedVersion": null,
+          "availableVersion": null,
+          "releaseNotes": null,
+          "checkedAt": null,
+          "source": null,
+          "noticeRequired": false,
+          "noticeText": null,
+          "reason": "disabled"
+        }
+      }
+    },
+    "check": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 197,
+      "command": [
+        "/opt/homebrew/Cellar/node/25.9.0_3/bin/node",
+        "/Users/prashant.malge/.agents/skills/archify/bin/archify.mjs",
+        "check",
+        "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.html",
+        "--require-provenance"
+      ],
+      "receipt": {
+        "ok": true,
+        "file": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.html",
+        "artifact": {
+          "sha256": "cd3040148a33e7cbe1814d74532b14ca9796d15c5a9d992b22c69affafbac12b",
+          "bytes": 835726
+        },
+        "checks": [
+          {
+            "name": "single_svg",
+            "ok": true,
+            "details": [
+              "found 1 <svg> block(s)"
+            ]
+          },
+          {
+            "name": "finite_svg",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "orthogonal_arrows",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "label_route_clearance",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "relationship_crossings",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "relationship_corridors",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "container_border_runs",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "route_rhythm",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "legend_clearance",
+            "ok": true,
+            "details": []
+          }
+        ],
+        "composition": {
+          "schemaVersion": 1,
+          "profile": "showcase",
+          "status": "pass",
+          "summary": {
+            "errors": 0,
+            "warnings": 0
+          },
+          "metrics": {
+            "properCrossings": 0,
+            "resolvedCrossovers": 0,
+            "ambiguousCorridors": 0,
+            "arrowheadCollisions": 0,
+            "containerBorderRuns": 0,
+            "labelRouteClearanceIssues": 0,
+            "labelCanvasOverflowIssues": 0,
+            "minLabelRouteClearance": 28,
+            "desktopReadabilityIssues": 0,
+            "viewportHeightIssues": 0,
+            "minProjectedNodeTextPx": 6.246268656716418,
+            "maxBends": 0,
+            "routesOverSuggestedBends": 0,
+            "maxStretch": 1,
+            "routesOverSuggestedStretch": 0,
+            "minSegmentPx": 8,
+            "minInteriorSegmentPx": null,
+            "shortSegmentCount": 2,
+            "shortEndpointSegmentCount": 2,
+            "shortInteriorSegmentCount": 0,
+            "microSegmentCount": 0
+          },
+          "suggestedLimits": {
+            "bendsPerRelationship": 2,
+            "stretch": 1.35,
+            "segmentPx": 16,
+            "microSegmentPx": 8
+          },
+          "routeReview": {
+            "crossings": [],
+            "detours": []
+          },
+          "leadingSpace": {
+            "measured": false,
+            "reviewSuggested": false
+          },
+          "desktopReadability": {
+            "budgetBasis": "legacy-930",
+            "readerContract": "declared-wide-v1",
+            "availableDiagramWidth": 930,
+            "actualBudgetPx": 930,
+            "limit": "legacy",
+            "requestedTargetPx": null,
+            "requestedTargetMet": null,
+            "hardFloorPx": 6,
+            "hardFloorMet": true,
+            "minimumOwner": {
+              "kind": "node",
+              "id": "report"
+            },
+            "minimumSourceTextPx": 7.2,
+            "minimumProjectedTextPx": 6.246268656716418,
+            "semanticTextCount": 36
+          },
+          "issues": []
+        },
+        "provenance": "current",
+        "deliveryReceiptId": "20bf659b-e49d-40fc-b20f-8718db9d3d4b"
+      }
+    },
+    "browser-check": {
+      "status": "fail",
+      "exitCode": 1,
+      "durationMs": 7,
+      "command": [
+        "/opt/homebrew/Cellar/node/25.9.0_3/bin/node",
+        "/Users/prashant.malge/.agents/skills/archify/bin/archify.mjs",
+        "browser-check",
+        "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.html",
+        "--json",
+        "--require-provenance"
+      ],
+      "execution": "in-process",
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": false,
+        "command": "browser-check",
+        "evidenceKind": "automated-browser",
+        "status": "fail",
+        "visualReview": "not-requested",
+        "provenance": "current",
+        "deliveryReceiptId": "20bf659b-e49d-40fc-b20f-8718db9d3d4b",
+        "artifact": {
+          "path": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.html",
+          "sha256": "cd3040148a33e7cbe1814d74532b14ca9796d15c5a9d992b22c69affafbac12b",
+          "bytes": 835726
+        },
+        "state": {
+          "detail": "read",
+          "motion": "still"
+        },
+        "chrome": {
+          "status": "not-checked",
+          "executable": null
+        },
+        "diagnostics": [
+          {
+            "code": "viewer/evidence-path-conflict",
+            "severity": "error",
+            "message": "browser-check will not replace the existing unowned evidence path \"/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.browser-check.json\".",
+            "subject": {
+              "artifact": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.html",
+              "evidencePath": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.browser-check.json"
+            },
+            "evidence": {
+              "reason": {
+                "code": "ownership-artifact-mismatch"
+              }
+            },
+            "supportedFixes": [
+              "move the conflicting file aside, or choose a separate --out-dir, then rerun browser-check"
+            ]
+          }
+        ],
+        "containment": {
+          "status": "fail",
+          "policy": "fit-or-reader-declared-readable-vertical-scroll",
+          "viewports": []
+        },
+        "themeStates": {
+          "status": "fail",
+          "viewports": []
+        },
+        "readability": {
+          "status": "fail",
+          "minimumProjectedNodeTextPx": 6,
+          "viewports": []
+        },
+        "viewerChrome": {
+          "status": "fail",
+          "viewports": []
+        },
+        "captures": {
+          "status": "not-requested",
+          "screenshots": [],
+          "contactSheet": null
+        },
+        "sidecars": {
+          "receipt": "wsp-end-to-end-flow.browser-check.json",
+          "files": []
+        },
+        "error": "browser-check will not replace the existing unowned evidence path \"/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.browser-check.json\"."
+      }
+    }
+  },
+  "browserCheck": {
+    "requested": true,
+    "ran": false
+  },
+  "diagnostics": [
+    {
+      "code": "viewer/evidence-path-conflict",
+      "severity": "error",
+      "message": "browser-check will not replace the existing unowned evidence path \"/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.browser-check.json\".",
+      "subject": {
+        "artifact": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.html",
+        "evidencePath": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.browser-check.json"
+      },
+      "evidence": {
+        "reason": {
+          "code": "ownership-artifact-mismatch"
+        }
+      },
+      "supportedFixes": [
+        "move the conflicting file aside, or choose a separate --out-dir, then rerun browser-check"
+      ]
+    }
+  ],
+  "evidence": {
+    "receipt": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.finalize.json",
+    "summaryReceipt": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.finalize-summary.json",
+    "browserCheckReceipt": "/Users/prashant.malge/Documents/study/noobs/wsp/docs/wsp-end-to-end-flow.browser-check.json"
+  },
+  "visualReview": "not-requested",
+  "failedStage": "browser-check",
+  "finishedAt": "2026-11-08T15:41:14.184Z",
+  "durationMs": 750,
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-11-08T15:40:43.749Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "counts": {
+    "train": {
+      "cat": 4000,
+      "dog": 4000
+    },
+    "val": {
+      "cat": 1500,
+      "dog": 1500
+    },
+    "test": {
+      "cat": 3000,
+      "dog": 3000
+    }
+  },
+  "rejects_by_reason": {
+    "cat": {
+      "exact_duplicate_or_wsp001": 1827,
+      "not_jpeg": 94,
+      "too_small_image": 78,
+      "too_small_file": 3
+    },
+    "dog": {
+      "exact_duplicate_or_wsp001": 1819,
+      "too_small_image": 80,
+      "not_jpeg": 135,
+      "too_small_file": 2
+    }
+  },
+  "near_duplicates_removed": {
+    "cat": 33,
+    "dog": 27
+  },
+  "content": {
+    "train_cat": {
+      "n": 4000,
+      "mean_width": 413.5,
+      "mean_height": 358.8,
+      "min_side": 100,
+      "max_side": 500,
+      "brightness": 117.4,
+      "contrast": 55.7,
+      "edge_density": 10.5,
+      "warmth_r_minus_b": 13.9,
+      "brightness_range": [
+        36.6,
+        189.2
+      ]
+    },
+    "train_dog": {
+      "n": 4000,
+      "mean_width": 403.2,
+      "mean_height": 370.3,
+      "min_side": 100,
+      "max_side": 500,
+      "brightness": 117.2,
+      "contrast": 52.2,
+      "edge_density": 11.4,
+      "warmth_r_minus_b": 20.5,
+      "brightness_range": [
+        51.5,
+        185.9
+      ]
+    },
+    "val_cat": {
+      "n": 1500,
+      "mean_width": 412.4,
+      "mean_height": 357.0,
+      "min_side": 100,
+      "max_side": 500,
+      "brightness": 117.6,
+      "contrast": 56.3,
+      "edge_density": 10.7,
+      "warmth_r_minus_b": 19.7,
+      "brightness_range": [
+        46.8,
+        199.7
+      ]
+    },
+    "val_dog": {
+      "n": 1500,
+      "mean_width": 406.8,
+      "mean_height": 367.1,
+      "min_side": 100,
+      "max_side": 500,
+      "brightness": 116.3,
+      "contrast": 49.6,
+      "edge_density": 10.8,
+      "warmth_r_minus_b": 18.2,
+      "brightness_range": [
+        55.2,
+        204.3
+      ]
+    }
+  },
+  "zip_sha256": "b7974bd00a84a99921f36ee4403f089853777b5ae8d151c76a86e64900334af9",
+  "seed": 3,
+  "per_class": {
+    "train": 4000,
+    "val": 1500,
+    "test": 3000
+  },
+  "total": 17000
+}

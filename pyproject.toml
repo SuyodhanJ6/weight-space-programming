@@ -1,0 +1,13 @@
+[project]
+name = "wsp"
+version = "0.1.0"
+description = "Weight-Space Programming (WSP) research project"
+readme = "README.md"
+requires-python = ">=3.13"
+# Basic image processing + neural network implementation only.
+# No pretrained models, no deep-learning framework with bundled weights.
+dependencies = [
+    "numpy",
+    "pillow",
+    "torch>=2.15.0",
+]

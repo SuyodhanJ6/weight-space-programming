@@ -1,0 +1,48 @@
+{
+  "initial": {
+    "checkpoint": "checkpoints/wsp-003/iter000_initial.pt",
+    "n": 6000,
+    "accuracy": 0.6071666666666666,
+    "precision": 0.6108238538435022,
+    "recall": 0.5906666666666667,
+    "f1": 0.6005761735299102,
+    "confusion": {
+      "tp": 1772,
+      "fp": 1129,
+      "tn": 1871,
+      "fn": 1228
+    },
+    "bce_loss_metric": 0.7996630668640137,
+    "mean_signed_margin": 0.5254219174385071,
+    "accuracy_ci95": [
+      0.5947,
+      0.6195
+    ]
+  },
+  "final": {
+    "checkpoint": "checkpoints/wsp-003/iter013.pt",
+    "n": 6000,
+    "accuracy": 0.7713333333333333,
+    "precision": 0.7874293785310734,
+    "recall": 0.7433333333333333,
+    "f1": 0.7647462277091907,
+    "confusion": {
+      "tp": 2230,
+      "fp": 602,
+      "tn": 2398,
+      "fn": 770
+    },
+    "bce_loss_metric": 0.49907904863357544,
+    "mean_signed_margin": 1.1604539155960083,
+    "accuracy_ci95": [
+      0.7605,
+      0.7818
+    ]
+  },
+  "paired": {
+    "n": 6000,
+    "final_right_initial_wrong": 1532,
+    "initial_right_final_wrong": 547,
+    "mcnemar_exact_p_two_sided": 1.8755729322279513e-107
+  }
+}

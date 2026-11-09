@@ -1,0 +1,42 @@
+{
+  "counts": {
+    "train": {
+      "cat": 4000,
+      "dog": 4000
+    },
+    "val": {
+      "cat": 1500,
+      "dog": 1500
+    },
+    "test": {
+      "cat": 1942,
+      "dog": 1942
+    }
+  },
+  "rejects_by_reason": {
+    "cat": {
+      "exact_duplicate_or_wsp001": 10327,
+      "not_jpeg": 94,
+      "too_small_image": 78,
+      "too_small_file": 3
+    },
+    "dog": {
+      "exact_duplicate_or_wsp001": 10319,
+      "too_small_image": 80,
+      "not_jpeg": 135,
+      "too_small_file": 2
+    }
+  },
+  "near_duplicates_removed": {
+    "cat": 14,
+    "dog": 8
+  },
+  "near_duplicates_of_trainval_removed": {
+    "cat": 18,
+    "dog": 14
+  },
+  "zip_sha256": "b7974bd00a84a99921f36ee4403f089853777b5ae8d151c76a86e64900334af9",
+  "seed": 4,
+  "total": 14884,
+  "note": "train/val identical to wsp-003; test = all leftover unseen images"
+}
